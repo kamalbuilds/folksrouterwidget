@@ -49,3 +49,26 @@ This Turborepo has some additional tools already setup for you:
 - [TypeScript](https://www.typescriptlang.org/) for static type checking
 - [ESLint](https://eslint.org/) for code linting
 - [Prettier](https://prettier.io) for code formatting
+
+
+>>> Success! Your new Turborepo is ready.
+Inside this directory, you can run several commands:
+
+  yarn run build
+     Build all apps and packages
+
+  yarn run dev
+     Develop all apps and packages
+
+  yarn run lint
+     Lint all apps and packages
+
+Turborepo will cache locally by default. For an additional
+speed boost, enable Remote Caching with Vercel by
+entering the following command:
+
+  npx turbo login
+
+We suggest that you begin by typing:
+
+  npx turbo login
