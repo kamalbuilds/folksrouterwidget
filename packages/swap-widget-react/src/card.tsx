@@ -1,5 +1,4 @@
 import * as React from "react";
-import ConnectedWallet from "./Components/ConnectWallet";
 
 export function Card({
   title,
@@ -17,7 +16,6 @@ export function Card({
       rel="noopener noreferrer"
       target="_blank"
     >
-      <ConnectedWallet />
       <h2 className="ui-mb-3 ui-text-2xl ui-font-semibold">
         {title}{" "}
         <span className="ui-inline-block ui-transition-transform group-hover:ui-translate-x-1 motion-reduce:ui-transform-none">
