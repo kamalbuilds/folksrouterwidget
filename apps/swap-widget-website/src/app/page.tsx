@@ -1,6 +1,7 @@
 "use client";
 import Image from "next/image";
 import { Card } from "../../../../packages/swap-widget-react/dist";
+import Signandsend from "../Components/Signandsend";
 
 function Gradient({
   conic,
@@ -51,6 +52,7 @@ export default function Page(): JSX.Element {
         <p className="fixed px-4 left-0 top-0 flex w-full justify-center border-b bg-gradient-to-b pb-6 pt-8 backdrop-blur-2xl border-neutral-800 bg-zinc-800/30 from-inherit lg:static lg:w-auto lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:bg-zinc-800/30">
           examples/with-tailwind -&nbsp;
           <code className="font-mono font-bold">web</code>
+          <Signandsend />
         </p>
         <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-black via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
           <a
