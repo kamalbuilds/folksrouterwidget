@@ -4,12 +4,14 @@ import { IoSettingsSharp } from "react-icons/io5";
 import { MdSwapVerticalCircle } from "react-icons/md";
 import { RiArrowDropDownLine } from "react-icons/ri";
 import { FaWallet } from "react-icons/fa";
-import { ChakraProvider } from '@chakra-ui/react'
-
-
+import { ChakraProvider, Flex } from '@chakra-ui/react'
 import { Button, Input, InputGroup, InputLeftAddon, InputLeftElement, InputRightElement, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, useDisclosure } from '@chakra-ui/react';
 import TokenModal from "./Components/TokenModal";
 import TokenList, { I_TokenList } from "./constants/TokenList";
+import { IoIosCloseCircleOutline } from "react-icons/io";
+import InputTokenAmount from "./Components/InputToken";
+import SelectToken from "./Components/SelectToken";
+
 
 
 export function Widget({ }) {
@@ -18,9 +20,13 @@ export function Widget({ }) {
     const [tokenTwoAmount, setTokenTwoAmount] = React.useState<number>(0);
 
     const [tokenPicked, setTokenPicked] = React.useState<number>(1);
-
     const [selectedToken, setSelectedToken] = React.useState<I_TokenList>();
 
+    const [filteredTokenList, setFilteredTokenList] = React.useState(TokenList);
+
+    const [isLoading, setIsLoading] = React.useState(false);
+
+    // For getting details of Token One and Token Two
     const [tokenOne, setTokenOne] = React.useState<I_TokenList>();
     const [tokenTwo, setTokenTwo] = React.useState<I_TokenList>();
 
@@ -32,67 +38,148 @@ export function Widget({ }) {
     }
 
 
+    const getTokenAmount = async (tokenAmount: any, InputToken: any, OutputToken: any) => {
+        if (tokenAmount && tokenOne && tokenTwo) {
+            const inputTokenDecimal = InputToken?.assetDecimal;
 
-    const changeTokenOneAmount = (e: any) => {
-        e.preventDefault();
-        const tokenAmount = parseInt(e.target.value.replace(/\D/, '')) || 0
-        setTokenOneAmount(tokenAmount);
+            let decimalTokenAmount = tokenAmount * (10 ** inputTokenDecimal);
+            console.log("Final Amount", decimalTokenAmount, inputTokenDecimal, tokenAmount);
 
-        if (tokenAmount && tokenOne) {
-            const tokenOneDecimal = tokenOne?.assetDecimal;
-
-            let finalAmount = tokenAmount * (10 ** tokenOneDecimal);
-            console.log("Final Amount", finalAmount, tokenOneDecimal, tokenAmount);
-
-            // setTokenOneAmount(finalAmount);
             console.log("Token Selected", selectedToken);
-            fetchQuote(finalAmount);
+
+            const res = await fetchQuote(decimalTokenAmount, InputToken, OutputToken);
+            console.log("Res in the change function", res);
+
+            const outputTokenDecimal = OutputToken?.assetDecimal;
+            const { quoteAmount } = res.result;
+            const fetchedAmount = quoteAmount / (10 ** outputTokenDecimal);
+            console.log("Fetched Amount", fetchedAmount);
+            return fetchedAmount;
 
         }
+    }
 
+    const changeTokenOneAmount = async (value: any) => {
 
+        const tokenAmount = value;
+        setTokenOneAmount(tokenAmount);
+
+        console.log("Token Amount", tokenAmount, tokenOne, tokenTwo);
+
+        const outputTokenAmount = await getTokenAmount(tokenAmount, tokenOne, tokenTwo);
+        console.log("outputTokenAmount", outputTokenAmount)
+
+        if (outputTokenAmount) {
+            setTokenTwoAmount(outputTokenAmount);
+        }
 
     }
 
-    const changeTokenTwoAmount = (e: any) => {
-        e.preventDefault();
-        setTokenTwoAmount(parseInt(e.target.value.replace(/\D/, '')) || 0);
+    const changeTokenTwoAmount = async (value: any) => {
+        setIsLoading(true);
 
-        console.log("Token Selected", selectedToken);
+        const tokenAmount = value;
+        setTokenTwoAmount(tokenAmount);
+
+        console.log("Token Amount", tokenAmount, tokenOne, tokenTwo);
+
+        const outputTokenAmount = await getTokenAmount(tokenAmount, tokenTwo, tokenOne);
+        console.log("outputTokenAmount", outputTokenAmount)
+
+        if (outputTokenAmount) {
+            setTokenOneAmount(outputTokenAmount);
+        }
+
+        setIsLoading(false);
+
+    }
+
+    const getDataWhenTokensChanged = async (value: any, tokenSelected: any, tokenPicked: any) => {
+        const tokenAmount = value;
+
+        const inputToken = tokenSelected;
+        const outputToken = tokenPicked == 1 ? tokenTwo : tokenOne;
+
+        console.log("Tokens which ", inputToken, outputToken);
+
+        const outputTokenAmount = await getTokenAmount(tokenAmount, inputToken, outputToken);
+        console.log("outputTokenAmount", outputTokenAmount)
+
+        if (outputTokenAmount) {
+            if (tokenPicked == 1) {
+                setTokenTwoAmount(outputTokenAmount);
+            } else {
+                setTokenOneAmount(outputTokenAmount);
+            }
+        }
     }
 
     const handleTokenSelect = (token: any) => {
-        console.log("Token selected", token, TokenList[0]);
+        console.log("Token selected", token, tokenPicked);
 
         if (tokenPicked == 1) {
             setTokenOne(token);
-        } else if (tokenPicked === 2) {
+            if (tokenOneAmount) {
+                getDataWhenTokensChanged(tokenOneAmount, token, tokenPicked);
+            }
+        } else if (tokenPicked == 2) {
             setTokenTwo(token);
+            if (tokenTwoAmount) {
+                getDataWhenTokensChanged(tokenTwoAmount, token, tokenPicked);
+            }
         }
-
         setSelectedToken(token);
     }
 
 
-    const fetchQuote = async (tokenAmount: number) => {
+    const fetchQuote = async (tokenAmount: number, InputToken: any, OutputToken: any) => {
         try {
+            if (InputToken && OutputToken) {
+                console.log("Inputs", InputToken, OutputToken, tokenAmount);
 
-            if (tokenOne && tokenTwo) {
-                console.log("Inputs", tokenOne, tokenTwo, tokenAmount);
-
-                const url = `https://api.folksrouter.io/testnet/v1/fetch/quote?network=testnet&fromAsset=${tokenOne.assetId}&toAsset=${tokenTwo.assetId}&amount=${tokenAmount}&type=FIXED_INPUT`;
+                const url = `https://api.folksrouter.io/testnet/v1/fetch/quote?network=testnet&fromAsset=${InputToken.assetId}&toAsset=${OutputToken.assetId}&amount=${tokenAmount}&type=FIXED_INPUT`;
 
                 const response = await fetch(url);
                 const res = await response.json();
                 console.log("response", res);
+                return res;
             }
-
-
-
         } catch (error) {
             console.log("Error", error);
         }
     }
+
+    const handleSwapButton = async () => {
+        console.log("Tokens", tokenOne, tokenTwo, tokenOneAmount);
+
+        const tokenAmount = tokenOneAmount;
+
+        setTokenTwo(tokenOne);
+        setTokenOne(tokenTwo);
+
+        let inputToken = tokenTwo;
+        let outputToken = tokenOne;
+
+
+        const outputTokenAmount = await getTokenAmount(tokenAmount, inputToken, outputToken);
+        console.log("outputTokenAmount", outputTokenAmount)
+        if (outputTokenAmount) {
+            setTokenTwoAmount(outputTokenAmount);
+        }
+
+    }
+
+
+    const filterTokenList = () => {
+        const tokenlistFiltered = TokenList.filter((token: any) => (
+            token !== selectedToken
+        ))
+        setFilteredTokenList(tokenlistFiltered);
+    }
+
+    React.useEffect(() => {
+        filterTokenList();
+    }, [selectedToken])
 
 
 
@@ -103,13 +190,17 @@ export function Widget({ }) {
 
                 <Modal isOpen={isOpen} onClose={onClose}>
                     <ModalOverlay />
-                    <ModalContent bg='#304256' w='300px' m='auto' borderRadius='20px' style={{ height: '500px' }}>
-                        <ModalHeader color='#FFF'>Select Token</ModalHeader>
+                    <ModalContent bg='#304256' w='425px' m='auto' borderRadius='15px' style={{ height: '500px' }}>
+                        <ModalHeader color='#FFF' >
+                            <Flex justify={'space-between'}>
+                                Select Token
+                                <IoIosCloseCircleOutline onClick={onClose} className="ui-w-[30px] ui-h-[30px] ui-cursor-pointer" />
+                            </Flex>
+                        </ModalHeader>
 
-                        <ModalCloseButton color='#FFF' fontSize='md' />
                         <ModalBody p={0}>
                             <TokenModal
-                                tokenList={TokenList}
+                                tokenList={filteredTokenList}
                                 handleTokenSelect={handleTokenSelect}
                                 onClose={onClose}
                             />
@@ -121,7 +212,6 @@ export function Widget({ }) {
 
                 <div className=" ui-bg-[#0f172a] ui-text-white ui-flex ui-flex-col ui-items-center ui-justify-center ui-border-2 ui-border-gray-600 ui-px-8 ui-py-4 ui-rounded-lg">
 
-
                     <div className="ui-flex ui-flex-row ui-justify-between ui-flex-1 ui-w-[100%]">
                         <div className="ui-text-[20px]">Swap</div>
                         <div className="ui-border ui-border-gray-600 hover:ui-border-gray-300 ui-p-[10px] ui-cursor-pointer ui-rounded-xl">
@@ -129,122 +219,70 @@ export function Widget({ }) {
                         </div>
                     </div>
 
-
-
-
                     <div className="ui-flex ui-flex-col ui-gap-8 ui-w-[inherit] ui-m-[10px]">
-                        <div className="ui-flex ui-bg-[#1E293B]  ui-border-gray-400 ui-border ui-px-4 ui-py-2 ui-rounded-xl ui-flex-col ui-gap-4">
-                            <div className="ui-flex">
-                                <div>
-                                    <p className="ui-text-[16px] ui-text-gray-500">You Pay</p>
-                                    <span className='ui-flex-1 ui-flex ui-flex-col ui-justify-center ui-items-end'>
-                                        <div className='ui-w-full'>
-                                            <input
-                                                className='ui-text-[34px] ui-w-[300px]  ui-text-slate-300 focus-visible:ui-shadow-none focus-visible:ui-outline-0 ui-text-start ui-bg-transparent '
-                                                height='100%'
-                                                placeholder='0'
-                                                value={tokenOneAmount}
-                                                onChange={(e) => changeTokenOneAmount(e)}
-                                                autoFocus={true}
-                                            />
-                                        </div>
-                                    </span>
+                        <div>
+                            <p className="ui-text-[16px] ui-text-gray-500">You Pay</p>
+                            <div className="ui-flex ui-bg-[#1E293B]  ui-border-gray-400 ui-border ui-px-4 ui-py-2 ui-rounded-xl ui-flex-col ui-gap-4">
+                                <div className="ui-flex ui-justify-between">
+
+                                    <InputTokenAmount
+                                        tokenAmount={tokenOneAmount}
+                                        changeTokenAmount={changeTokenOneAmount}
+                                        setTokenAmount={setTokenOneAmount}
+                                    />
+
+                                    <SelectToken
+                                        id={'1'}
+                                        openTokenModal={openTokenModal}
+                                        token={tokenOne}
+                                    />
                                 </div>
 
-                                <div className="ui-flex ui-flex-col ui-justify-center">
-                                    <div onClick={() => openTokenModal(1)} className="ui-flex ui-cursor-pointer ui-rounded-full ui-items-center ui-flex-row ui-gap-2 ui-bg-gray-700 ui-border ui-border-gray-400 ui-p-[10px]">
-                                        <div className="ui-flex ui-items-center ui-gap-2">
-                                            {tokenOne ? (
-                                                <>
-                                                    <img className='rounded-3xl'
-                                                        src='https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png'
-                                                        alt='USDC'
-                                                        width={30}
-                                                        height={30}
-                                                    />
-                                                    <p>{tokenOne?.label}</p>
-                                                </>
-                                            ) : (
-                                                <>
-                                                    Select Asset
-                                                </>
-                                            )}
-                                        </div>
-                                        <div>
-                                            <RiArrowDropDownLine className="ui-w-[30px] ui-h-[30px]" />
-                                        </div>
+                                <div className="ui-flex ui-flex-row ui-justify-between ui-text-gray-400">
+                                    <div className="">
+                                        <span className="ui-text-[20px]">$0</span>
+                                        <span className="ui-text-[14px]">.0</span>
                                     </div>
-                                </div>
-                            </div>
-
-                            <div className="ui-flex ui-flex-row ui-justify-between ui-text-gray-400">
-                                <div className="">
-                                    <span className="ui-text-[20px]">$0</span>
-                                    <span className="ui-text-[14px]">.0</span>
-                                </div>
-                                <div className="ui-flex ui-flex-row ui-gap-[4px] ui-items-center">
-                                    <FaWallet />
-                                    <div>0.00</div>
+                                    <div className="ui-flex ui-flex-row ui-gap-[4px] ui-items-center">
+                                        <FaWallet />
+                                        <div>0.00</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
 
                         <div className="ui-flex ui-justify-center ui-items-center">
-                            <MdSwapVerticalCircle className="ui-w-[40px] ui-h-[40px]" />
+                            <MdSwapVerticalCircle onClick={handleSwapButton} className="ui-w-[40px] ui-h-[40px]" />
                         </div>
 
+                        <div>
+                            <p className="ui-text-[16px]  ui-text-gray-500">You Receive</p>
 
-                        <div className="ui-flex ui-bg-[#1E293B]  ui-border-gray-400 ui-border ui-px-4 ui-py-2 ui-rounded-xl ui-flex-col ui-gap-4">
-                            <div className="ui-flex">
-                                <div>
-                                    <p className="ui-text-[16px]  ui-text-gray-500">You Receive</p>
-                                    <span className='ui-flex-1 ui-flex ui-flex-col ui-justify-center ui-items-end'>
-                                        <div className='ui-w-full'>
-                                            <input
-                                                className='ui-text-[34px] ui-w-[300px] ui-text-slate-300 focus-visible:ui-shadow-none focus-visible:ui-outline-0 ui-text-start ui-bg-transparent'
-                                                height='100%'
-                                                placeholder='0'
-                                                value={tokenTwoAmount}
-                                                onChange={(e) => changeTokenTwoAmount(e)}
-                                                autoFocus={true}
-                                            />
-                                        </div>
-                                    </span>
+                            <div className="ui-flex ui-bg-[#1E293B]  ui-border-gray-400 ui-border ui-px-4 ui-py-2 ui-rounded-xl ui-flex-col ui-gap-4">
+                                <div className="ui-flex ui-justify-between">
+                                    <InputTokenAmount
+                                        tokenAmount={tokenTwoAmount}
+                                        changeTokenAmount={changeTokenTwoAmount}
+                                        setTokenAmount={setTokenTwoAmount}
+                                    />
+
+                                    <SelectToken
+                                        id={'2'}
+                                        openTokenModal={openTokenModal}
+                                        token={tokenTwo}
+                                    />
                                 </div>
 
-                                <div className="ui-flex ui-flex-col ui-justify-center">
-                                    <div onClick={() => openTokenModal(2)} className="ui-flex ui-cursor-pointer ui-rounded-full ui-items-center ui-flex-row ui-gap-2 ui-bg-gray-700 ui-border ui-border-gray-400 ui-p-[10px]">
-                                        {tokenTwo ? (
-                                            <div className="ui-flex ui-items-center ui-gap-2">
-                                                <img className='rounded-3xl'
-                                                    src='https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png'
-                                                    alt='USDC'
-                                                    width={30}
-                                                    height={30}
-                                                />
-                                                <p>{tokenTwo?.label}</p>
-                                            </div>
-                                        ) : (
-                                            <>
-                                                Select Asset
-                                            </>
-                                        )}
-                                        <div>
-                                            <RiArrowDropDownLine className="ui-w-[30px] ui-h-[30px]" />
-                                        </div>
+                                <div className="ui-flex ui-flex-row ui-justify-between ui-text-gray-400">
+                                    <div className="">
+                                        <span className="ui-text-[20px]">$0</span>
+                                        <span className="ui-text-[14px]">.0</span>
                                     </div>
-                                </div>
-                            </div>
-
-                            <div className="ui-flex ui-flex-row ui-justify-between ui-text-gray-400">
-                                <div className="">
-                                    <span className="ui-text-[20px]">$0</span>
-                                    <span className="ui-text-[14px]">.0</span>
-                                </div>
-                                <div className="ui-flex ui-flex-row ui-gap-[4px] ui-items-center">
-                                    <FaWallet />
-                                    <div>0.00</div>
+                                    <div className="ui-flex ui-flex-row ui-gap-[4px] ui-items-center">
+                                        <FaWallet />
+                                        <div>0.00</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
