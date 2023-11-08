@@ -17,9 +17,11 @@ const InputContainer = ({
 }: any) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
 
-    const [filteredTokenList, setFilteredTokenList] = React.useState(TokenList);
+    // const [filteredTokenList, setFilteredTokenList] = React.useState(TokenList);
 
-    const [assetsOfUser, setAssetsOfUser] = React.useState(TokenList);
+    const [assetsOfUser, setAssetsOfUser] = React.useState();
+
+    const [filteredTokenList, setFilteredTokenList] = React.useState();
 
     const {
         clients,
@@ -31,12 +33,12 @@ const InputContainer = ({
     const getUsersAssets = async () => {
         const usersAssets = await getAssets();
 
-
         console.log("User Assets", usersAssets, TokenList);
 
         const TokensObjectValues = Object.values(usersAssets);
         console.log("TokensObjectValues", TokensObjectValues);
 
+        setAssetsOfUser(TokensObjectValues);
         setFilteredTokenList(TokensObjectValues);
 
     }
@@ -108,16 +110,19 @@ const InputContainer = ({
     }
 
     const filterTokenList = () => {
-        console.log("Selected token", selectedToken);
-        const tokenlistFiltered = TokenList.filter((token: any) => (
-            token !== selectedToken
+        console.log("Selected token", selectedToken, assetsOfUser);
+        const tokenlistFiltered = assetsOfUser.filter((token: any) => (
+            token.assetId !== selectedToken?.assetId
         ))
+        console.log("TokenList Filtered", tokenlistFiltered);
         setFilteredTokenList(tokenlistFiltered);
     }
 
     React.useEffect(() => {
         console.log("Selected token in useEffect", selectedToken);
-        filterTokenList();
+        if (selectedToken) {
+            filterTokenList();
+        }
     }, [selectedToken])
 
 

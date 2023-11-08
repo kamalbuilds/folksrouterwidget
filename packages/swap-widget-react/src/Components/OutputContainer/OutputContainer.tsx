@@ -71,8 +71,7 @@ const OutputContainer = ({
     const filterTokenList = () => {
         console.log("Selected token", selectedToken);
         const tokenlistFiltered = TokenList.filter((token: any) => (
-            token !== selectedToken
-        ))
+            token.assetId !== selectedToken?.assetId))
         setFilteredTokenList(tokenlistFiltered);
     }
 
