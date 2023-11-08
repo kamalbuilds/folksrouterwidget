@@ -13,7 +13,7 @@ const SelectToken = ({
 
                 {token && <div>
                     <img className='rounded-3xl'
-                        src='https://user-images.githubusercontent.com/67144388/252993005-c5d02152-8ff6-400f-97f7-f867878ccb5f.png'
+                        src={token.src}
                         alt='USDC'
                         width={25}
                         height={25}
