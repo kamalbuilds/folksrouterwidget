@@ -23,7 +23,7 @@ import { GlobalContext } from "../context/GlobalContext";
 const SwapWidget = () => {
 
     const [filteredTokenList, setFilteredTokenList] = React.useState(TokenList);
-
+    const algod = TestnetAlgodClient;
     const {
         providers,
         activeAddress,
@@ -68,10 +68,11 @@ const SwapWidget = () => {
         const inputTokenDecimal = inputToken?.assetDecimal;
         const outputTokenDecimal = outputToken?.assetDecimal;
 
+        // @ts-ignore
         const decimalTokenAmount = tokenAmount * (10 ** inputTokenDecimal);
 
         const quoteAmount = await getTokenAmount(decimalTokenAmount, inputToken, outputToken, 'FIXED_INPUT');
-
+// @ts-ignore
         const fetchedAmount = quoteAmount / (10 ** outputTokenDecimal);
 
         if (fetchedAmount) {
@@ -82,7 +83,7 @@ const SwapWidget = () => {
 
 
     const handleSwapButton = async () => {
-
+    // @ts-ignore
         const { address } = activeAccount;
 
         const url = `https://api.folksrouter.io/testnet/v1/prepare/swap?userAddress=${address}&slippageBps=${slippageValue}&txnPayload=${txnPayload}`
@@ -90,55 +91,19 @@ const SwapWidget = () => {
         const response = await fetch(url);
         const res = await response.json();
         const { result } = res;
+        // @ts-ignore
+        // const unsignedTxns = result.map(txn => decodeUnsignedTransaction(Buffer.from(txn, "base64")));
+        const unsignedTxns = result.map(txn => Buffer.from(txn, "base64"));
+        const signedTransactions = await signTransactions(unsignedTxns);
+        console.log(signedTransactions,"signed");
 
-        SignusingPerraWallet(result)
-
+        const sendraw = await algod.sendRawTransaction(signedTransactions).do();
+        console.log(sendraw, "signed txn");
     }
 
     // const TestnetAlgodClient = new Algodv2("", "https://testnet-api.algonode.cloud/", 443);
-    const algod = TestnetAlgodClient;
-
-    const SignusingPerraWallet = async (result: any) => {
-        try {
-            const { address } = activeAccount;
-
-            console.log("activeAccount", activeAccount, address);
-
-            // const signedTransactions = await signTransactions([result]);
-            // const waitRoundsToConfirm = 4
-            // const { id } = await sendTransactions(signedTransactions, waitRoundsToConfirm)
-
-            // console.log('Successfully sent transaction. Transaction ID: ', id)
 
 
-
-            // // @ts-ignore
-            const unsignedTxns = result.map(txn => decodeUnsignedTransaction(Buffer.from(txn, "base64")));
-            console.log(unsignedTxns, "unsigned");
-            const multipleTxnGroups = [
-                { txn: unsignedTxns[0], signers: [address] },
-                { txn: unsignedTxns[1], signers: [address] },
-                { txn: unsignedTxns[2], signers: [address] }
-            ];
-
-
-            console.log("multipleTxnGroups", multipleTxnGroups)
-
-            const encodedTransaction = algosdk.encodeUnsignedTransaction(unsignedTxns[0]);
-            console.log("encodedTransaction", encodedTransaction);
-            const signedTransactions = await signTransactions([encodedTransaction])
-            console.log("signedTransactions", signedTransactions);
-
-            // const signedTxns = await peraWallet.signTransaction([multipleTxnGroups], address);
-            // // const signedTxns = unsignedTxns.map(txn => txn.signTxn(user.sk));
-            // console.log("signed txn", signedTxns);
-            // // submit
-            // const sendraw = await algod.sendRawTransaction(signedTxns).do();
-            // console.log(sendraw, "signed txn");
-        } catch (error) {
-            console.log("Couldn't sign Opt-in txns", error);
-        }
-    };
 
     const filterTokenList = () => {
         const tokenlistFiltered = TokenList.filter((token: any) => (
