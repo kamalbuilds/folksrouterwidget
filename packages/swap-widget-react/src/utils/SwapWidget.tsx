@@ -65,54 +65,27 @@ const SwapWidget = () => {
         onOpen();
     }
 
-
-    const getDataWhenTokensChanged = async (value: any, tokenSelected: any, tokenPicked: any) => {
-        const tokenAmount = value;
-
-        const inputToken = tokenSelected;
-        const outputToken = tokenPicked == 1 ? tokenTwo : tokenOne;
-
-        const outputTokenAmount = await getTokenAmount(tokenAmount, inputToken, outputToken);
-        if (outputTokenAmount) {
-            if (tokenPicked == 1) {
-                setTokenTwoAmount(outputTokenAmount);
-            } else {
-                setTokenOneAmount(outputTokenAmount);
-            }
-        }
-    }
-
-    const handleTokenSelect = (token: any) => {
-        if (tokenPicked == 1) {
-            setTokenOne(token);
-            if (tokenOneAmount) {
-                getDataWhenTokensChanged(tokenOneAmount, token, tokenPicked);
-            }
-        } else if (tokenPicked == 2) {
-            setTokenTwo(token);
-            if (tokenTwoAmount) {
-                getDataWhenTokensChanged(tokenTwoAmount, token, tokenPicked);
-            }
-        }
-        setSelectedToken(token);
-    }
-
-
-
-
     const handleInvertAssetButton = async () => {
-        const tokenAmount = tokenOneAmount;
 
         setTokenTwo(tokenOne);
         setTokenOne(tokenTwo);
 
+        const tokenAmount = tokenOneAmount;
+
         let inputToken = tokenTwo;
         let outputToken = tokenOne;
 
+        const inputTokenDecimal = inputToken?.assetDecimal;
+        const outputTokenDecimal = outputToken?.assetDecimal;
 
-        const outputTokenAmount = await getTokenAmount(tokenAmount, inputToken, outputToken);
-        if (outputTokenAmount) {
-            setTokenTwoAmount(outputTokenAmount);
+        const decimalTokenAmount = tokenAmount * (10 ** inputTokenDecimal);
+
+        const quoteAmount = await getTokenAmount(decimalTokenAmount, inputToken, outputToken, 'FIXED_INPUT');
+
+        const fetchedAmount = quoteAmount / (10 ** outputTokenDecimal);
+
+        if (fetchedAmount) {
+            setTokenTwoAmount(fetchedAmount);
         }
 
     }
@@ -196,48 +169,19 @@ const SwapWidget = () => {
         <>
             <div className="ui-flex  ui-items-center ui-justify-center ">
 
-
-                <Modal isOpen={isOpen} onClose={onClose}>
-                    <ModalOverlay />
-                    <ModalContent bg='#304256' w='425px' m='auto' borderRadius='15px' style={{ height: '500px' }}>
-                        <ModalHeader color='#FFF' >
-                            <Flex justify={'space-between'}>
-                                Select Token
-                                <IoIosCloseCircleOutline onClick={onClose} className="ui-w-[30px] ui-h-[30px] ui-cursor-pointer" />
-                            </Flex>
-                        </ModalHeader>
-
-                        <ModalBody p={0}>
-                            <TokenModal
-                                tokenList={filteredTokenList}
-                                handleTokenSelect={handleTokenSelect}
-                                onClose={onClose}
-                            />
-                        </ModalBody>
-                    </ModalContent>
-                </Modal>
-
                 <div className=" ui-bg-[#0f172a] ui-text-white ui-flex ui-flex-col ui-items-center ui-justify-center ui-border-2 ui-border-gray-600 ui-px-8 ui-py-4 ui-rounded-lg">
 
                     <WidgetHeader />
 
                     <div className="ui-flex ui-flex-col ui-gap-8 ui-w-[inherit] ui-m-[10px]">
 
-                        <InputContainer
-                            openTokenModal={openTokenModal}
-                            filteredTokenList={filteredTokenList}
-                            handleTokenSelect={handleTokenSelect}
-                        />
+                        <InputContainer />
 
                         <div className="ui-flex ui-justify-center ui-items-center">
                             <MdSwapVerticalCircle onClick={handleInvertAssetButton} className="ui-w-[40px] ui-h-[40px]" />
                         </div>
 
-                        <OutputContainer
-                            openTokenModal={openTokenModal}
-                            filteredTokenList={filteredTokenList}
-                            handleTokenSelect={handleTokenSelect}
-                        />
+                        <OutputContainer />
 
                     </div>
 

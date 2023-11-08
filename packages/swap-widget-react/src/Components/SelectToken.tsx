@@ -9,7 +9,7 @@ const SelectToken = ({
 
     return (
         <div className="ui-flex ui-flex-col ui-justify-center ui-min-w-[130px]">
-            <div onClick={() => openTokenModal(id)} className="ui-flex ui-justify-between ui-cursor-pointer ui-rounded-xl ui-items-center ui-flex-row ui-gap-2 ui-bg-gray-700 ui-border ui-border-gray-400 ui-px-[10px] ui-py-[8px]">
+            <div onClick={() => openTokenModal()} className="ui-flex ui-justify-between ui-cursor-pointer ui-rounded-xl ui-items-center ui-flex-row ui-gap-2 ui-bg-gray-700 ui-border ui-border-gray-400 ui-px-[10px] ui-py-[8px]">
 
                 {token && <div>
                     <img className='rounded-3xl'

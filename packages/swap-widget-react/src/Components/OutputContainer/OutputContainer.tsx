@@ -6,42 +6,80 @@ import { Button, Flex, Input, InputGroup, InputLeftAddon, InputLeftElement, Inpu
 import { IoIosCloseCircleOutline } from "react-icons/io";
 import TokenModal from '../TokenModal';
 import { SwapContext } from '../../context/SwapContext';
+import TokenList, { I_TokenList } from '../../constants/TokenList';
 
 const OutputContainer = ({
-    openTokenModal,
-    filteredTokenList,
-    handleTokenSelect
+    // filteredTokenList,
 }: any) => {
 
     const { isOpen, onOpen, onClose } = useDisclosure();
+    const [filteredTokenList, setFilteredTokenList] = React.useState(TokenList);
+
     const {
         tokenOne,
         tokenTwo,
         tokenOneAmount,
         tokenTwoAmount,
+        selectedToken,
+        setTokenTwo,
         setTokenOneAmount,
         setTokenTwoAmount,
+        getDataWhenTokensChanged,
+        setSelectedToken,
         getTokenAmount
     } = React.useContext(SwapContext);
 
 
     const changeTokenTwoAmount = async (value: any) => {
-        // setIsLoading(true);
-
         const tokenAmount = value;
         setTokenTwoAmount(tokenAmount);
 
+        const tokenTwoDecimal = tokenTwo?.assetDecimal;
+        const tokenOneDecimal = tokenOne?.assetDecimal;
+        const decimalTokenAmount = tokenAmount * (10 ** tokenTwoDecimal);
 
-        const outputTokenAmount = await getTokenAmount(tokenAmount, tokenTwo, tokenOne);
+        const quoteAmount = await getTokenAmount(decimalTokenAmount, tokenOne, tokenTwo, 'FIXED_OUTPUT');
 
-        if (outputTokenAmount) {
-            setTokenOneAmount(outputTokenAmount);
+        const fetchedAmount = quoteAmount / (10 ** tokenOneDecimal);
+
+        console.log("fetchedAmount in output", fetchedAmount);
+
+        if (fetchedAmount) {
+            setTokenOneAmount(fetchedAmount);
         }
-
-        // setIsLoading(false);
 
     }
 
+    const handleTokenSelection = async (token: I_TokenList) => {
+        setTokenTwo(token);
+        setSelectedToken(token);
+
+        if (tokenTwoAmount) {
+            const outputTokenAmount = await getDataWhenTokensChanged(tokenTwoAmount, token, 'FIXED_OUTPUT');
+
+            if (outputTokenAmount) {
+                setTokenOneAmount(outputTokenAmount);
+            }
+        } else if (tokenOneAmount) {
+            const outputTokenAmount = await getDataWhenTokensChanged(tokenOneAmount, token, 'FIXED_INPUT');
+            if (outputTokenAmount) {
+                setTokenTwoAmount(outputTokenAmount);
+            }
+        }
+    }
+
+    const filterTokenList = () => {
+        console.log("Selected token", selectedToken);
+        const tokenlistFiltered = TokenList.filter((token: any) => (
+            token !== selectedToken
+        ))
+        setFilteredTokenList(tokenlistFiltered);
+    }
+
+    React.useEffect(() => {
+        console.log(" In Input Selected token in useEffect", selectedToken);
+        filterTokenList();
+    }, [selectedToken])
 
     return (
         <div>
@@ -59,7 +97,7 @@ const OutputContainer = ({
                     <ModalBody p={0}>
                         <TokenModal
                             tokenList={filteredTokenList}
-                            handleTokenSelect={handleTokenSelect}
+                            handleTokenSelect={handleTokenSelection}
                             onClose={onClose}
                         />
                     </ModalBody>
@@ -80,7 +118,7 @@ const OutputContainer = ({
 
                     <SelectToken
                         id={'2'}
-                        openTokenModal={openTokenModal}
+                        openTokenModal={onOpen}
                         token={tokenTwo}
                     />
                 </div>

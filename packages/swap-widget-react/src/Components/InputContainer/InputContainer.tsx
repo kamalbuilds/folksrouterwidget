@@ -8,17 +8,16 @@ import { IoIosCloseCircleOutline } from "react-icons/io";
 import { GlobalContext } from '../../context/GlobalContext';
 import { useWallet } from '@txnlab/use-wallet';
 import { SwapContext } from '../../context/SwapContext';
+import TokenList, { I_TokenList, TokenObject } from '../../constants/TokenList';
 
 
 
 const InputContainer = ({
-    openTokenModal,
-    filteredTokenList,
-    handleTokenSelect
-
+    // filteredTokenList,
 }: any) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
 
+    const [filteredTokenList, setFilteredTokenList] = React.useState(TokenList);
 
     const {
         clients,
@@ -30,6 +29,13 @@ const InputContainer = ({
     const getUsersAssets = async () => {
         const usersAssets = await getAssets();
 
+        console.log("User Assets", usersAssets, TokenList);
+
+        const TokensObjectValues = Object.values(usersAssets);
+        console.log("TokensObjectValues", TokensObjectValues);
+
+        setFilteredTokenList(TokensObjectValues);
+
     }
 
 
@@ -39,13 +45,19 @@ const InputContainer = ({
         }
     }, [activeAccount])
 
+
+
     const {
         tokenOne,
         tokenTwo,
         tokenOneAmount,
         tokenTwoAmount,
+        selectedToken,
+        setSelectedToken,
+        setTokenOne,
         setTokenOneAmount,
         setTokenTwoAmount,
+        getDataWhenTokensChanged,
         getTokenAmount
     } = React.useContext(SwapContext);
 
@@ -55,13 +67,55 @@ const InputContainer = ({
         const tokenAmount = value;
         setTokenOneAmount(tokenAmount);
 
-        const outputTokenAmount = await getTokenAmount(tokenAmount, tokenOne, tokenTwo);
+        console.log("Inputs", tokenAmount, tokenOne, tokenTwo);
 
-        if (outputTokenAmount) {
-            setTokenTwoAmount(outputTokenAmount);
+        const tokenOneDecimal = tokenOne?.assetDecimal;
+        const tokenTwoDecimal = tokenTwo?.assetDecimal;
+
+        const decimalTokenAmount = tokenAmount * (10 ** tokenOneDecimal);
+
+        const quoteAmount = await getTokenAmount(decimalTokenAmount, tokenOne, tokenTwo, 'FIXED_INPUT');
+
+        const fetchedAmount = quoteAmount / (10 ** tokenTwoDecimal);
+
+        console.log("fetchedAmount in input", fetchedAmount);
+
+
+        if (fetchedAmount) {
+            setTokenTwoAmount(fetchedAmount);
         }
 
     }
+
+    const handleTokenSelection = async (token: I_TokenList) => {
+        setSelectedToken(token);
+        setTokenOne(token);
+        if (tokenOneAmount) {
+            const outputTokenAmount = await getDataWhenTokensChanged(tokenOneAmount, token, 'FIXED_INPUT');
+            if (outputTokenAmount) {
+                setTokenTwoAmount(outputTokenAmount);
+            }
+        } else if (tokenTwoAmount) {
+            const outputTokenAmount = await getDataWhenTokensChanged(tokenTwoAmount, token, 'FIXED_OUTPUT');
+
+            if (outputTokenAmount) {
+                setTokenOneAmount(outputTokenAmount);
+            }
+        }
+    }
+
+    const filterTokenList = () => {
+        console.log("Selected token", selectedToken);
+        const tokenlistFiltered = TokenList.filter((token: any) => (
+            token !== selectedToken
+        ))
+        setFilteredTokenList(tokenlistFiltered);
+    }
+
+    React.useEffect(() => {
+        console.log("Selected token in useEffect", selectedToken);
+        filterTokenList();
+    }, [selectedToken])
 
 
     return (
@@ -81,12 +135,13 @@ const InputContainer = ({
                     <ModalBody p={0}>
                         <TokenModal
                             tokenList={filteredTokenList}
-                            handleTokenSelect={handleTokenSelect}
+                            handleTokenSelect={handleTokenSelection}
                             onClose={onClose}
                         />
                     </ModalBody>
                 </ModalContent>
             </Modal>
+
             <p className="ui-text-[16px] ui-text-gray-500">You Pay</p>
             <div className="ui-flex ui-bg-[#1E293B]  ui-border-gray-400 ui-border ui-px-4 ui-py-2 ui-rounded-xl ui-flex-col ui-gap-4">
                 <div className="ui-flex ui-justify-between">
@@ -99,7 +154,7 @@ const InputContainer = ({
 
                     <SelectToken
                         id={'1'}
-                        openTokenModal={openTokenModal}
+                        openTokenModal={onOpen}
                         token={tokenOne}
                     />
                 </div>

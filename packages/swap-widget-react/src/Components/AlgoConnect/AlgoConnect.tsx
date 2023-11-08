@@ -41,7 +41,6 @@ const AlgoConnect = ({
         if (!activeAccount) throw new Error('No selected account.')
 
         const walletClient = getClient(activeAccount.providerId)
-        // console.log("walletClient info", walletClient);
 
         const asset = await walletClient?.getAssets(activeAccount.address);
         console.log("walletClient info", asset);

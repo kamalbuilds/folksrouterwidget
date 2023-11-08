@@ -54,12 +54,12 @@ const SwapContextProvider = ({ children }: any) => {
     const [slippageValue, setSlippageValue] = React.useState(50);
 
 
-    const fetchQuote = async (tokenAmount: number, InputToken: any, OutputToken: any) => {
+    const fetchQuote = async (tokenAmount: number, InputToken: any, OutputToken: any, type: string) => {
         try {
-            if (InputToken && OutputToken) {
-                console.log("Inputs", InputToken, OutputToken, tokenAmount);
+            if (tokenOne && tokenTwo) {
+                console.log("Inputs in fetch quote", InputToken, OutputToken, tokenAmount, type);
 
-                const url = `https://api.folksrouter.io/testnet/v1/fetch/quote?network=testnet&fromAsset=${InputToken.assetId}&toAsset=${OutputToken.assetId}&amount=${tokenAmount}&type=FIXED_INPUT`;
+                const url = `https://api.folksrouter.io/testnet/v1/fetch/quote?network=testnet&fromAsset=${InputToken.assetId}&toAsset=${OutputToken.assetId}&amount=${tokenAmount}&type=${type}`;
 
                 const response = await fetch(url);
                 const res = await response.json();
@@ -74,18 +74,55 @@ const SwapContextProvider = ({ children }: any) => {
         }
     }
 
-    const getTokenAmount = async (tokenAmount: any, InputToken: any, OutputToken: any) => {
-        if (tokenAmount && tokenOne && tokenTwo) {
-            const inputTokenDecimal = InputToken?.assetDecimal;
+    const getTokenAmount = async (tokenAmount: any, InputToken: any, OutputToken: any, type: string) => {
 
-            let decimalTokenAmount = tokenAmount * (10 ** inputTokenDecimal);
-            const res = await fetchQuote(decimalTokenAmount, InputToken, OutputToken);
-            const outputTokenDecimal = OutputToken?.assetDecimal;
+        if (tokenOne && tokenTwo && tokenAmount) {
+
+            console.log("Input data in getTokenAmount fn", InputToken, OutputToken, type)
+
+            const res = await fetchQuote(tokenAmount, InputToken, OutputToken, type);
             const { quoteAmount } = res.result;
+            console.log("quoteAmount", quoteAmount);
+            return quoteAmount;
+        }
+    }
+
+    const getDataWhenTokensChanged = async (value: any, tokenSelected: any, type: string) => {
+        const tokenAmount = value;
+
+        if (type === 'FIXED_INPUT') {
+            console.log("Tokens", tokenOne, tokenTwo, type, tokenSelected)
+
+            const inputTokenDecimal = tokenSelected?.assetDecimal;
+            let decimalTokenAmount = tokenAmount * (10 ** inputTokenDecimal);
+
+            const response = await fetchQuote(decimalTokenAmount, tokenSelected, tokenTwo, type);
+
+            const { quoteAmount } = response.result;
+
+            const outputTokenDecimal = tokenTwo?.assetDecimal;
             const fetchedAmount = quoteAmount / (10 ** outputTokenDecimal);
             console.log("Fetched Amount", fetchedAmount);
             return fetchedAmount;
+
+        } else if (type === 'FIXED_OUTPUT') {
+            console.log("Tokens for fixed output", tokenOne, tokenTwo, type, tokenSelected)
+
+            const inputTokenDecimal = tokenSelected?.assetDecimal;
+            let decimalTokenAmount = tokenAmount * (10 ** inputTokenDecimal);
+
+            const response = await fetchQuote(decimalTokenAmount, tokenOne, tokenSelected, type);
+
+            const { quoteAmount } = response.result;
+
+            const outputTokenDecimal = tokenOne?.assetDecimal;
+            const fetchedAmount = quoteAmount / (10 ** outputTokenDecimal);
+            console.log("Fetched Amount", fetchedAmount);
+            return fetchedAmount;
+
         }
+
+
     }
 
 
@@ -107,7 +144,8 @@ const SwapContextProvider = ({ children }: any) => {
             setTxnPayload,
             setSelectedToken,
             getTokenAmount,
-            setSlippageValue
+            setSlippageValue,
+            getDataWhenTokensChanged
         }}>
             {children}
         </SwapContext.Provider>

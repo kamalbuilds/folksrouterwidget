@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Input } from '@chakra-ui/react';
+import { Image, Input } from '@chakra-ui/react';
 import { I_TokenList } from '../constants/TokenList';
 
 
@@ -25,6 +25,7 @@ const TokenModal = ({
         setListOfTokens(sortedTokenList);
     }
 
+    console.log("tokenList", tokenList)
 
     return (
         <div className='ui-text-white'>
@@ -43,6 +44,7 @@ const TokenModal = ({
                             className='ui-text-white ui-flex ui-items-center ui-py-4 ui-px-4 ui-cursor-pointer ui-my-2 hover:ui-bg-[#486586] hover:ui-text-white'>
                             <div className='leftTokenContainer ui-mr-4'>
                                 <img src={token.src} className='ui-w-[30px] ui-h-[30px]' />
+                                <Image src={token.src} />
                             </div>
                             <div className='ui-flex ui-flex-col ui-items-baseline'>
                                 <div className=''>{token.title}</div>
