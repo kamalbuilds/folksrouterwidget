@@ -6,16 +6,19 @@ export type I_TokenList = {
     title: string;
     assetId: number;
     assetDecimal: number;
+    mainnetAssetId: number | null;
     src: string;
+    price?: {};
 }
 
-export const TokenObject = {
+export const TokenObject: any = {
     0: {
         label: 'Algo',
         title: 'Algo',
         assetId: 0,
         assetDecimal: 6,
         amount: 0,
+        // mainnetAssetId: 0,
         src: "https://github.com/tinymanorg/asa-list/blob/review/assets/ALGO/icon.png?raw=true"
 
     },
@@ -25,6 +28,7 @@ export const TokenObject = {
         assetId: 167184545,
         assetDecimal: 6,
         amount: 0,
+        mainnetAssetId: 793124631,
         src: "https://github.com/tinymanorg/asa-list/blob/review/assets/gALGO-793124631/icon.png?raw=true"
 
     },
@@ -34,6 +38,7 @@ export const TokenObject = {
         assetId: 67395862,
         assetDecimal: 6,
         amount: 0,
+        mainnetAssetId: 31566704,
         src: "https://github.com/tinymanorg/asa-list/blob/review/assets/USDC-31566704/icon.png?raw=true"
 
     },
@@ -43,6 +48,7 @@ export const TokenObject = {
         assetId: 67396430,
         assetDecimal: 6,
         amount: 0,
+        mainnetAssetId: 312769,
         src: "https://github.com/tinymanorg/asa-list/blob/review/assets/USDt-312769/icon.png?raw=true"
 
     },
@@ -52,6 +58,7 @@ export const TokenObject = {
         assetId: 67396528,
         assetDecimal: 8,
         amount: 0,
+        mainnetAssetId: 386192725,
         src: "https://github.com/tinymanorg/asa-list/blob/review/assets/goBTC-386192725/icon.png?raw=true"
     },
     76598897: {
@@ -60,6 +67,7 @@ export const TokenObject = {
         assetId: 76598897,
         assetDecimal: 8,
         amount: 0,
+        mainnetAssetId: 386195940,
         src: "https://github.com/tinymanorg/asa-list/blob/review/assets/goETH-386195940/icon.png?raw=true"
 
     }
@@ -71,6 +79,7 @@ const TokenList: I_TokenList[] = [
         title: 'Algo',
         assetId: 0,
         assetDecimal: 6,
+        mainnetAssetId: null,
         src: "https://github.com/tinymanorg/asa-list/blob/review/assets/ALGO/icon.png?raw=true"
     },
     {
@@ -78,6 +87,7 @@ const TokenList: I_TokenList[] = [
         title: 'gALGO',
         assetId: 167184545,
         assetDecimal: 6,
+        mainnetAssetId: 793124631,
         src: "https://github.com/tinymanorg/asa-list/blob/review/assets/gALGO-793124631/icon.png?raw=true"
     },
     {
@@ -85,6 +95,7 @@ const TokenList: I_TokenList[] = [
         title: 'USD Coin',
         assetId: 67395862,
         assetDecimal: 6,
+        mainnetAssetId: 31566704,
         src: "https://github.com/tinymanorg/asa-list/blob/review/assets/USDC-31566704/icon.png?raw=true"
 
     },
@@ -93,6 +104,7 @@ const TokenList: I_TokenList[] = [
         title: 'Tether',
         assetId: 67396430,
         assetDecimal: 6,
+        mainnetAssetId: 312769,
         src: "https://github.com/tinymanorg/asa-list/blob/review/assets/USDt-312769/icon.png?raw=true"
 
     },
@@ -101,6 +113,7 @@ const TokenList: I_TokenList[] = [
         title: 'Bitcoin',
         assetId: 67396528,
         assetDecimal: 8,
+        mainnetAssetId: 386192725,
         src: "https://github.com/tinymanorg/asa-list/blob/review/assets/goBTC-386192725/icon.png?raw=true"
     },
     {
@@ -108,6 +121,7 @@ const TokenList: I_TokenList[] = [
         title: 'Ethereum',
         assetId: 76598897,
         assetDecimal: 8,
+        mainnetAssetId: 386195940,
         src: "https://github.com/tinymanorg/asa-list/blob/review/assets/goETH-386195940/icon.png?raw=true"
     },
 

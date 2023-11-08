@@ -54,13 +54,11 @@ const ProfileSettings = () => {
         const walletClient = getClient(activeAccount.providerId)
 
         const asset = await walletClient?.getAssets(activeAccount.address);
-        console.log("walletClient info", asset);
 
         const TokensObject = Object.keys(TokenObject);
 
         const AssetsOfUser = asset.map((asset) => {
             const assetId = asset['asset-id'];
-            console.log("Assetid", assetId);
 
             TokenObject[assetId]['amount'] = asset.amount;
 

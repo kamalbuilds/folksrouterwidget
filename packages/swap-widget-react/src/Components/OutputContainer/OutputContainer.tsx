@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import SelectToken from '../SelectToken';
 import { FaWallet } from "react-icons/fa";
 import InputTokenAmount from '../InputToken';
@@ -42,8 +42,6 @@ const OutputContainer = ({
 
         const fetchedAmount = quoteAmount / (10 ** tokenOneDecimal);
 
-        console.log("fetchedAmount in output", fetchedAmount);
-
         if (fetchedAmount) {
             setTokenOneAmount(fetchedAmount);
         }
@@ -54,31 +52,75 @@ const OutputContainer = ({
         setTokenTwo(token);
         setSelectedToken(token);
 
-        if (tokenTwoAmount) {
-            const outputTokenAmount = await getDataWhenTokensChanged(tokenTwoAmount, token, 'FIXED_OUTPUT');
+        if (tokenOneAmount) {
+            const outputTokenAmount = await getDataWhenTokensChanged(
+                tokenOneAmount,
+                tokenOne,
+                token,
+                'FIXED_INPUT'
+            );
 
-            if (outputTokenAmount) {
-                setTokenOneAmount(outputTokenAmount);
-            }
-        } else if (tokenOneAmount) {
-            const outputTokenAmount = await getDataWhenTokensChanged(tokenOneAmount, token, 'FIXED_INPUT');
             if (outputTokenAmount) {
                 setTokenTwoAmount(outputTokenAmount);
             }
+        } else if (tokenTwoAmount) {
+            const outputTokenAmount = await getDataWhenTokensChanged(
+                tokenTwoAmount,
+                tokenOne,
+                token,
+                'FIXED_OUTPUT'
+            );
+            if (outputTokenAmount) {
+                setTokenOneAmount(outputTokenAmount);
+            }
         }
+
     }
 
     const filterTokenList = () => {
-        console.log("Selected token", selectedToken);
         const tokenlistFiltered = TokenList.filter((token: any) => (
             token.assetId !== selectedToken?.assetId))
         setFilteredTokenList(tokenlistFiltered);
     }
 
     React.useEffect(() => {
-        console.log(" In Input Selected token in useEffect", selectedToken);
-        filterTokenList();
+        if (selectedToken) {
+            filterTokenList();
+        }
     }, [selectedToken])
+
+
+    const [tokenBalance, setTokeBalance] = useState(0);
+    const [tokenAmountInUSD, setTokenAmountInUSD] = useState(0);
+
+    const [inputTokenAmountInUSD, setInputTokenAmountInUSD] = useState(0);
+
+    const getBalanceDetails = () => {
+        if (tokenTwo) {
+            const tokenDecimal = tokenTwo.assetDecimal;
+            const tokenBalance = tokenTwo?.amount / (10 ** tokenDecimal);
+            setTokeBalance(tokenBalance);
+
+            const priceOfUsd = tokenTwo?.price?.USD;
+            const tokenAmountInUSD = tokenBalance * priceOfUsd;
+
+            if (tokenTwoAmount) {
+                const tokenAmountInUSD = (tokenTwoAmount * priceOfUsd)
+                setInputTokenAmountInUSD(tokenAmountInUSD);
+
+            }
+
+            setTokenAmountInUSD(tokenAmountInUSD);
+        }
+
+    }
+
+    useEffect(() => {
+        if (tokenTwo) {
+            getBalanceDetails();
+        }
+
+    }, [tokenTwoAmount, tokenTwo])
 
     return (
         <div>
@@ -116,7 +158,6 @@ const OutputContainer = ({
                     />
 
                     <SelectToken
-                        id={'2'}
                         openTokenModal={onOpen}
                         token={tokenTwo}
                     />
@@ -124,12 +165,7 @@ const OutputContainer = ({
 
                 <div className="ui-flex ui-flex-row ui-justify-between ui-text-gray-400">
                     <div className="">
-                        <span className="ui-text-[20px]">$0</span>
-                        <span className="ui-text-[14px]">.0</span>
-                    </div>
-                    <div className="ui-flex ui-flex-row ui-gap-[4px] ui-items-center">
-                        <FaWallet />
-                        <div>0.00</div>
+                        <span className="ui-text-[20px]">${inputTokenAmountInUSD.toFixed(2)}</span>
                     </div>
                 </div>
             </div>

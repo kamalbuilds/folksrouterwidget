@@ -2,7 +2,6 @@ import React from 'react';
 import { RiArrowDropDownLine } from "react-icons/ri";
 
 const SelectToken = ({
-    id,
     openTokenModal,
     token
 }: any) => {

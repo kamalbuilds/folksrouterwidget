@@ -2,7 +2,6 @@ import { PROVIDER_ID, WalletClient, useWallet } from "@txnlab/use-wallet";
 import { createContext, useState } from "react";
 import { TokenObject } from "../constants/TokenList";
 
-
 export const GlobalContext = createContext({});
 
 const GlobalContextProvider = ({ children }: any) => {
@@ -43,6 +42,26 @@ const GlobalContextProvider = ({ children }: any) => {
         return accountInfo
     }
 
+    const fetchPricesOfAssets = async () => {
+        let asset: any;
+        for (asset in TokenObject) {
+            console.log("Asset", asset);
+            // const assetId = asset?.mainnetAssetId;
+            const assetId = TokenObject[asset].mainnetAssetId;
+            if (assetId) {
+                const prices = await fetchPrices(assetId);
+                console.log("Prices", prices) // Call the API and get the prices for the corresponding assetId
+                if (prices) {
+                    TokenObject[asset].price = prices; // Add the fetched price to the object
+                } else {
+                    console.log(`Failed to fetch prices for assetId ${assetId}.`);
+                }
+            }
+        }
+
+        return TokenObject;
+    }
+
     const getAssets = async () => {
         if (!activeAccount) throw new Error('No selected account.')
 
@@ -56,7 +75,7 @@ const GlobalContextProvider = ({ children }: any) => {
         let algoAsset;
         if (accountInfo) {
             algoAsset = {
-                amount: accountInfo.amount,
+                amount: accountInfo?.amount,
                 'asset-id': 0,
                 'is-frozen': false
             };
@@ -64,27 +83,44 @@ const GlobalContextProvider = ({ children }: any) => {
 
         const totalAssets = [algoAsset, ...asset];
 
-        const TokensObject = Object.keys(TokenObject);
+        const FinalTokenObject = await fetchPricesOfAssets();
+        console.log("FinalTokenObject", FinalTokenObject);
+
+        const TokensObject = Object.keys(FinalTokenObject);
 
         let AssetsOfUser;
         if (totalAssets) {
             AssetsOfUser = totalAssets.map((asset) => {
-                const assetId = asset['asset-id'];
-                console.log("Assetid", assetId);
+                if (asset) {
+                    const assetId = asset['asset-id'];
+                    console.log("Assetid", assetId);
 
-                TokenObject[assetId]['amount'] = asset.amount;
+                    FinalTokenObject[assetId]['amount'] = asset.amount;
 
-                if (TokensObject.includes(assetId.toString())) {
-                    return TokenObject[assetId];
+                    if (TokensObject.includes(assetId.toString())) {
+                        return FinalTokenObject[assetId];
+                    }
+                } else {
+                    console.log("Failed to add amount");
                 }
-
 
             })
         }
         console.log("AssetsOfUser in context", AssetsOfUser, TokenObject)
-        // return await walletClient?.getAssets(activeAccount.address)
         return AssetsOfUser
     }
+
+    async function fetchPrices(assetId: number) {
+        try {
+            const response = await fetch(`https://free-api.vestige.fi/asset/${assetId}/price`); // Replace this with your actual API endpoint
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error('Error fetching prices:', error);
+            return null;
+        }
+    }
+
 
 
     return (
@@ -92,7 +128,8 @@ const GlobalContextProvider = ({ children }: any) => {
             userAssets,
             setUserAssets,
             getClient,
-            getAssets
+            getAssets,
+            fetchPrices
         }}>
             {children}
         </GlobalContext.Provider>

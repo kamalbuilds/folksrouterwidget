@@ -19,8 +19,6 @@ const AlgoConnect = ({
         const walletClient = clients?.[id]
 
         if (!walletClient) throw new Error(`Client not found for ID: ${id}`)
-        console.log("walletClient", walletClient);
-
 
         return walletClient
     }
@@ -32,8 +30,6 @@ const AlgoConnect = ({
 
         const accountInfo = await walletClient?.getAccountInfo(activeAccount.address)
 
-        console.log("Account info", accountInfo, walletClient);
-
         return accountInfo
     }
 
@@ -43,8 +39,6 @@ const AlgoConnect = ({
         const walletClient = getClient(activeAccount.providerId)
 
         const asset = await walletClient?.getAssets(activeAccount.address);
-        console.log("walletClient info", asset);
-
 
         return await walletClient?.getAssets(activeAccount.address)
     }

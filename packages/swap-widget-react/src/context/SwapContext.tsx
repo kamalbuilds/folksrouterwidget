@@ -56,7 +56,7 @@ const SwapContextProvider = ({ children }: any) => {
 
     const fetchQuote = async (tokenAmount: number, InputToken: any, OutputToken: any, type: string) => {
         try {
-            if (tokenOne && tokenTwo) {
+            if (InputToken && OutputToken) {
                 console.log("Inputs in fetch quote", InputToken, OutputToken, tokenAmount, type);
 
                 const url = `https://api.folksrouter.io/testnet/v1/fetch/quote?network=testnet&fromAsset=${InputToken.assetId}&toAsset=${OutputToken.assetId}&amount=${tokenAmount}&type=${type}`;
@@ -87,40 +87,73 @@ const SwapContextProvider = ({ children }: any) => {
         }
     }
 
-    const getDataWhenTokensChanged = async (value: any, tokenSelected: any, type: string) => {
+    const getDataWhenTokensChanged = async (value: any, InputToken: any, OutputToken: any, type: string) => {
         const tokenAmount = value;
 
+        let decimalTokenAmount;
+        let outputTokenDecimal;
+
         if (type === 'FIXED_INPUT') {
-            console.log("Tokens", tokenOne, tokenTwo, type, tokenSelected)
+            const inputTokenDecimal = InputToken?.assetDecimal;
+            decimalTokenAmount = tokenAmount * (10 ** inputTokenDecimal);
 
-            const inputTokenDecimal = tokenSelected?.assetDecimal;
-            let decimalTokenAmount = tokenAmount * (10 ** inputTokenDecimal);
-
-            const response = await fetchQuote(decimalTokenAmount, tokenSelected, tokenTwo, type);
-
-            const { quoteAmount } = response.result;
-
-            const outputTokenDecimal = tokenTwo?.assetDecimal;
-            const fetchedAmount = quoteAmount / (10 ** outputTokenDecimal);
-            console.log("Fetched Amount", fetchedAmount);
-            return fetchedAmount;
-
+            outputTokenDecimal = OutputToken?.assetDecimal;
         } else if (type === 'FIXED_OUTPUT') {
-            console.log("Tokens for fixed output", tokenOne, tokenTwo, type, tokenSelected)
+            const inputTokenDecimal = OutputToken?.assetDecimal;
+            decimalTokenAmount = tokenAmount * (10 ** inputTokenDecimal);
 
-            const inputTokenDecimal = tokenSelected?.assetDecimal;
-            let decimalTokenAmount = tokenAmount * (10 ** inputTokenDecimal);
-
-            const response = await fetchQuote(decimalTokenAmount, tokenOne, tokenSelected, type);
-
-            const { quoteAmount } = response.result;
-
-            const outputTokenDecimal = tokenOne?.assetDecimal;
-            const fetchedAmount = quoteAmount / (10 ** outputTokenDecimal);
-            console.log("Fetched Amount", fetchedAmount);
-            return fetchedAmount;
-
+            outputTokenDecimal = InputToken?.assetDecimal;
         }
+
+        if (decimalTokenAmount) {
+            const response = await fetchQuote(decimalTokenAmount, InputToken, OutputToken, type);
+
+            if (response) {
+                const { quoteAmount } = response.result;
+                // const outputTokenDecimal = OutputToken?.assetDecimal;
+                const fetchedAmount = quoteAmount / (10 ** outputTokenDecimal);
+                console.log("Fetched Amount", fetchedAmount);
+                return fetchedAmount;
+            }
+        }
+
+
+
+
+        // if (type === 'FIXED_INPUT') {
+
+        //     // Fixed Input h means tokenOne changed and tokenTwoAmount and tokenTwo Remains fixed
+
+        //     console.log("Tokens", tokenOne, tokenTwo, type, tokenSelected)
+
+        //     const inputTokenDecimal = tokenOne?.assetDecimal;
+        //     let decimalTokenAmount = tokenAmount * (10 ** inputTokenDecimal);
+
+        //     const response = await fetchQuote(decimalTokenAmount, tokenOne, tokenSelected, type);
+
+        //     const { quoteAmount } = response.result;
+
+        //     const outputTokenDecimal = tokenSelected?.assetDecimal;
+        //     const fetchedAmount = quoteAmount / (10 ** outputTokenDecimal);
+        //     console.log("Fetched Amount", fetchedAmount);
+        //     return fetchedAmount;
+
+        // } else if (type === 'FIXED_OUTPUT') {
+        //     console.log("Tokens for fixed output", tokenOne, tokenTwo, type, tokenSelected)
+
+        //     const inputTokenDecimal = tokenTwo?.assetDecimal;
+        //     let decimalTokenAmount = tokenAmount * (10 ** inputTokenDecimal);
+
+        //     const response = await fetchQuote(decimalTokenAmount, tokenTwo, tokenSelected, type);
+
+        //     const { quoteAmount } = response.result;
+
+        //     const outputTokenDecimal = tokenSelected?.assetDecimal;
+        //     const fetchedAmount = quoteAmount / (10 ** outputTokenDecimal);
+        //     console.log("Fetched Amount", fetchedAmount);
+        //     return fetchedAmount;
+
+        // }
 
 
     }

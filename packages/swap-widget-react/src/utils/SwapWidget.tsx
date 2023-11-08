@@ -5,7 +5,7 @@ import { MdSwapVerticalCircle } from "react-icons/md";
 import { ChakraProvider, Flex, useColorMode } from '@chakra-ui/react'
 import { Button, Input, InputGroup, InputLeftAddon, InputLeftElement, InputRightElement, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, useDisclosure } from '@chakra-ui/react';
 // import TokenModal from "./Components/TokenModal";
-import TokenList, { I_TokenList } from "../constants/TokenList";
+import TokenList, { I_TokenList, TokenObject } from "../constants/TokenList";
 import { IoIosCloseCircleOutline } from "react-icons/io";
 import algosdk, { decodeUnsignedTransaction } from "algosdk";
 import { TestnetAlgodClient } from "../utils/config";
@@ -18,12 +18,9 @@ import OutputContainer from "../Components/OutputContainer/OutputContainer";
 import { SwapContext } from "../context/SwapContext";
 import TokenModal from "../Components/TokenModal";
 import { useWallet } from "@txnlab/use-wallet";
+import { GlobalContext } from "../context/GlobalContext";
 
 const SwapWidget = () => {
-
-    const { colorMode, toggleColorMode } = useColorMode();
-
-    const [tokenPicked, setTokenPicked] = React.useState<number>(1);
 
     const [filteredTokenList, setFilteredTokenList] = React.useState(TokenList);
 
@@ -39,6 +36,7 @@ const SwapWidget = () => {
         isActive
     } = useWallet()
 
+    const { fetchPrices } = React.useContext(GlobalContext);
 
     const {
         tokenOne,
@@ -56,14 +54,6 @@ const SwapWidget = () => {
         slippageValue
     } = React.useContext(SwapContext);
 
-
-    const { isOpen, onOpen, onClose } = useDisclosure();
-    const [accountAddress, setAccountAddress] = React.useState("");
-
-    const openTokenModal = (tokenPicked: number) => {
-        setTokenPicked(tokenPicked);
-        onOpen();
-    }
 
     const handleInvertAssetButton = async () => {
 
@@ -95,14 +85,10 @@ const SwapWidget = () => {
 
         const { address } = activeAccount;
 
-        console.log("activeAccount", activeAccount, address, activeAddress, slippageValue);
-
         const url = `https://api.folksrouter.io/testnet/v1/prepare/swap?userAddress=${address}&slippageBps=${slippageValue}&txnPayload=${txnPayload}`
 
         const response = await fetch(url);
         const res = await response.json();
-        console.log("response", res);
-
         const { result } = res;
 
         SignusingPerraWallet(result)
@@ -165,6 +151,24 @@ const SwapWidget = () => {
         filterTokenList();
     }, [selectedToken])
 
+    const fetchPricesOfAssets = async () => {
+        for (const asset of TokenList) {
+            const assetId = asset?.mainnetAssetId;
+            if (assetId) {
+                const prices = await fetchPrices(assetId);
+                if (prices) {
+                    asset.price = prices; // Add the fetched price to the object
+                } else {
+                    console.log(`Failed to fetch prices for assetId ${assetId}.`);
+                }
+            }
+        }
+    }
+
+    React.useEffect(() => {
+        fetchPricesOfAssets();
+    }, []);
+
     return (
         <>
             <div className="ui-flex  ui-items-center ui-justify-center ">
@@ -194,7 +198,7 @@ const SwapWidget = () => {
                 </div>
 
             </div>
-            <AlgoConnect />
+            {/* <AlgoConnect /> */}
         </>
     );
 };

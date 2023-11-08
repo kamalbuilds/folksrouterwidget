@@ -1,7 +1,6 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import InputTokenAmount from '../InputToken';
 import SelectToken from '../SelectToken';
-import { FaWallet } from "react-icons/fa";
 import { Button, Flex, Input, InputGroup, InputLeftAddon, InputLeftElement, InputRightElement, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, useDisclosure } from '@chakra-ui/react';
 import TokenModal from '../TokenModal';
 import { IoIosCloseCircleOutline } from "react-icons/io";
@@ -9,15 +8,12 @@ import { GlobalContext } from '../../context/GlobalContext';
 import { useWallet } from '@txnlab/use-wallet';
 import { SwapContext } from '../../context/SwapContext';
 import TokenList, { I_TokenList, TokenObject } from '../../constants/TokenList';
+import { FaWallet } from "react-icons/fa";
 
 
 
-const InputContainer = ({
-    // filteredTokenList,
-}: any) => {
+const InputContainer = () => {
     const { isOpen, onOpen, onClose } = useDisclosure();
-
-    // const [filteredTokenList, setFilteredTokenList] = React.useState(TokenList);
 
     const [assetsOfUser, setAssetsOfUser] = React.useState();
 
@@ -31,13 +27,9 @@ const InputContainer = ({
     const { getAssets } = useContext(GlobalContext);
 
     const getUsersAssets = async () => {
-        const usersAssets = await getAssets();
-
-        console.log("User Assets", usersAssets, TokenList);
+        const usersAssets = await getAssets(TokenObject);
 
         const TokensObjectValues = Object.values(usersAssets);
-        console.log("TokensObjectValues", TokensObjectValues);
-
         setAssetsOfUser(TokensObjectValues);
         setFilteredTokenList(TokensObjectValues);
 
@@ -72,8 +64,6 @@ const InputContainer = ({
         const tokenAmount = value;
         setTokenOneAmount(tokenAmount);
 
-        console.log("Inputs", tokenAmount, tokenOne, tokenTwo);
-
         const tokenOneDecimal = tokenOne?.assetDecimal;
         const tokenTwoDecimal = tokenTwo?.assetDecimal;
 
@@ -82,9 +72,6 @@ const InputContainer = ({
         const quoteAmount = await getTokenAmount(decimalTokenAmount, tokenOne, tokenTwo, 'FIXED_INPUT');
 
         const fetchedAmount = quoteAmount / (10 ** tokenTwoDecimal);
-
-        console.log("fetchedAmount in input", fetchedAmount);
-
 
         if (fetchedAmount) {
             setTokenTwoAmount(fetchedAmount);
@@ -95,35 +82,77 @@ const InputContainer = ({
     const handleTokenSelection = async (token: I_TokenList) => {
         setSelectedToken(token);
         setTokenOne(token);
+
         if (tokenOneAmount) {
-            const outputTokenAmount = await getDataWhenTokensChanged(tokenOneAmount, token, 'FIXED_INPUT');
+            const outputTokenAmount = await getDataWhenTokensChanged(
+                tokenOneAmount,
+                token,
+                tokenTwo,
+                'FIXED_INPUT'
+            );
+
             if (outputTokenAmount) {
                 setTokenTwoAmount(outputTokenAmount);
             }
         } else if (tokenTwoAmount) {
-            const outputTokenAmount = await getDataWhenTokensChanged(tokenTwoAmount, token, 'FIXED_OUTPUT');
-
+            const outputTokenAmount = await getDataWhenTokensChanged(
+                tokenTwoAmount,
+                token,
+                tokenTwo,
+                'FIXED_OUTPUT'
+            );
             if (outputTokenAmount) {
                 setTokenOneAmount(outputTokenAmount);
             }
         }
+
     }
 
     const filterTokenList = () => {
-        console.log("Selected token", selectedToken, assetsOfUser);
         const tokenlistFiltered = assetsOfUser.filter((token: any) => (
             token.assetId !== selectedToken?.assetId
         ))
-        console.log("TokenList Filtered", tokenlistFiltered);
         setFilteredTokenList(tokenlistFiltered);
     }
 
     React.useEffect(() => {
-        console.log("Selected token in useEffect", selectedToken);
         if (selectedToken) {
             filterTokenList();
         }
     }, [selectedToken])
+
+
+    const [tokenBalance, setTokeBalance] = useState(0);
+    const [tokenAmountInUSD, setTokenAmountInUSD] = useState(0);
+
+    const [inputTokenAmountInUSD, setInputTokenAmountInUSD] = useState(0);
+
+    const getBalanceDetails = () => {
+        if (tokenOne) {
+            const tokenDecimal = tokenOne.assetDecimal;
+            const tokenBalance = tokenOne?.amount / (10 ** tokenDecimal);
+            setTokeBalance(tokenBalance);
+
+            const priceOfUsd = tokenOne?.price?.USD;
+            const tokenAmountInUSD = tokenBalance * priceOfUsd;
+
+            if (tokenOneAmount) {
+                const tokenAmountInUSD = (tokenOneAmount * priceOfUsd)
+                setInputTokenAmountInUSD(tokenAmountInUSD);
+
+            }
+
+            setTokenAmountInUSD(tokenAmountInUSD);
+        }
+
+    }
+
+    useEffect(() => {
+        if (tokenOne) {
+            getBalanceDetails();
+        }
+
+    }, [tokenOneAmount, tokenOne])
 
 
     return (
@@ -161,7 +190,6 @@ const InputContainer = ({
                     />
 
                     <SelectToken
-                        id={'1'}
                         openTokenModal={onOpen}
                         token={tokenOne}
                     />
@@ -169,12 +197,13 @@ const InputContainer = ({
 
                 <div className="ui-flex ui-flex-row ui-justify-between ui-text-gray-400">
                     <div className="">
-                        <span className="ui-text-[20px]">$0</span>
-                        <span className="ui-text-[14px]">.0</span>
+                        <span className="ui-text-[20px]">${inputTokenAmountInUSD.toFixed(2)}</span>
                     </div>
-                    <div className="ui-flex ui-flex-row ui-gap-[4px] ui-items-center">
-                        <FaWallet />
-                        <div>0.00</div>
+                    <div>
+                        <div className="ui-flex ui-flex-row ui-gap-[4px] ui-items-center">
+                            <FaWallet />
+                            <div>{tokenBalance.toFixed(4)}</div>
+                        </div>
                     </div>
                 </div>
             </div>

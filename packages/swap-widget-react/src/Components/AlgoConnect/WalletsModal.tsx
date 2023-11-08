@@ -13,8 +13,6 @@ const WalletsModal = () => {
         if (!id) throw new Error('Provider ID is missing.')
 
         const walletClient = clients?.[id]
-        console.log("Wallet Client", walletClient);
-
         if (!walletClient) throw new Error(`Client not found for ID: ${id}`)
 
         return walletClient
@@ -26,14 +24,10 @@ const WalletsModal = () => {
         const walletClient = getClient(activeAccount.providerId)
 
         const asset = await walletClient?.getAssets(activeAccount.address);
-        console.log("walletClient info", asset);
-
         const TokensObject = Object.keys(TokenObject);
 
         const AssetsOfUser = asset.map((asset) => {
             const assetId = asset['asset-id'];
-            console.log("Assetid", assetId);
-
             TokenObject[assetId]['amount'] = asset.amount;
 
             if (TokensObject.includes(assetId.toString())) {
@@ -42,7 +36,6 @@ const WalletsModal = () => {
 
 
         })
-        console.log("AssetsOfUser", AssetsOfUser, TokenObject)
         setUserAssets(AssetsOfUser);
         return await walletClient?.getAssets(activeAccount.address)
     }
