@@ -30,13 +30,10 @@ const InputContainer = ({
     const getUsersAssets = async () => {
         const usersAssets = await getAssets();
 
-        console.log("User Assets", usersAssets);
-
     }
 
 
     useEffect(() => {
-        console.log("<<<<<Active Account>>>>", activeAccount)
         if (activeAccount) {
             getUsersAssets();
         }
@@ -58,10 +55,7 @@ const InputContainer = ({
         const tokenAmount = value;
         setTokenOneAmount(tokenAmount);
 
-        console.log("Token Amount", tokenAmount, tokenOne, tokenTwo);
-
         const outputTokenAmount = await getTokenAmount(tokenAmount, tokenOne, tokenTwo);
-        console.log("outputTokenAmount", outputTokenAmount)
 
         if (outputTokenAmount) {
             setTokenTwoAmount(outputTokenAmount);

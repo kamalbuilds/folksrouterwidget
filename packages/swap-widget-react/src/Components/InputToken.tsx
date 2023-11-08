@@ -8,7 +8,6 @@ const InputTokenAmount = ({
 
     const handleChangeTokenAmount = (value: any) => {
         const tokenAmount = parseInt(value.replace(/\D/, '')) || 0
-        console.log("TokenAmount", tokenAmount);
         setTokenAmount(tokenAmount);
         changeTokenAmount(tokenAmount);
     }

@@ -22,7 +22,6 @@ const TokenModal = ({
         const sortedTokenList = tokenList.filter((token: any) =>
             token.label.toLowerCase().includes(value?.toLowerCase())
         );
-        console.log("Sorted Token List", sortedTokenList);
         setListOfTokens(sortedTokenList);
     }
 

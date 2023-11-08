@@ -8,12 +8,14 @@ type I_SwapContext = {
     tokenTwoAmount: number,
     txnPayload: string | undefined,
     selectedToken: I_TokenList | undefined,
+    slippageValue: number,
     setTokenOne: (tokenOne: I_TokenList | undefined) => void,
     setTokenOneAmount: (tokenOneAmount: number) => void,
     setTokenTwo: (tokenTwo: I_TokenList | undefined) => void,
     setTokenTwoAmount: (tokenTwoAmount: number,) => void,
     setTxnPayload: (txnPayload: string) => void,
     setSelectedToken: (selectedToken: I_TokenList | undefined) => void,
+    setSlippageValue: (slippageValue: number) => void;
     getTokenAmount: any,
 }
 
@@ -24,12 +26,14 @@ const initialValue = {
     tokenTwoAmount: 0,
     txnPayload: '',
     selectedToken: undefined,
+    slippageValue: 0,
     setTokenOne: () => { },
     setTokenOneAmount: () => { },
     setTokenTwo: () => { },
     setTokenTwoAmount: () => { },
     setTxnPayload: () => { },
     setSelectedToken: () => { },
+    setSlippageValue: () => { },
     getTokenAmount: null
 
 }
@@ -47,6 +51,7 @@ const SwapContextProvider = ({ children }: any) => {
     const [selectedToken, setSelectedToken] = React.useState<I_TokenList>();
 
     const [txnPayload, setTxnPayload] = React.useState<string>();
+    const [slippageValue, setSlippageValue] = React.useState(50);
 
 
     const fetchQuote = async (tokenAmount: number, InputToken: any, OutputToken: any) => {
@@ -74,13 +79,7 @@ const SwapContextProvider = ({ children }: any) => {
             const inputTokenDecimal = InputToken?.assetDecimal;
 
             let decimalTokenAmount = tokenAmount * (10 ** inputTokenDecimal);
-            console.log("Final Amount", decimalTokenAmount, inputTokenDecimal, tokenAmount);
-
-            console.log("Token Selected", selectedToken);
-
             const res = await fetchQuote(decimalTokenAmount, InputToken, OutputToken);
-            console.log("Res in the change function", res);
-
             const outputTokenDecimal = OutputToken?.assetDecimal;
             const { quoteAmount } = res.result;
             const fetchedAmount = quoteAmount / (10 ** outputTokenDecimal);
@@ -100,13 +99,15 @@ const SwapContextProvider = ({ children }: any) => {
             tokenTwoAmount,
             txnPayload,
             selectedToken,
+            slippageValue,
             setTokenOne,
             setTokenOneAmount,
             setTokenTwo,
             setTokenTwoAmount,
             setTxnPayload,
             setSelectedToken,
-            getTokenAmount
+            getTokenAmount,
+            setSlippageValue
         }}>
             {children}
         </SwapContext.Provider>

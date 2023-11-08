@@ -31,10 +31,8 @@ const OutputContainer = ({
         const tokenAmount = value;
         setTokenTwoAmount(tokenAmount);
 
-        console.log("Token Amount", tokenAmount, tokenOne, tokenTwo);
 
         const outputTokenAmount = await getTokenAmount(tokenAmount, tokenTwo, tokenOne);
-        console.log("outputTokenAmount", outputTokenAmount)
 
         if (outputTokenAmount) {
             setTokenOneAmount(outputTokenAmount);

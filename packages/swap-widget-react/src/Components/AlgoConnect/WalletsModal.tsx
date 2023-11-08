@@ -8,7 +8,6 @@ const WalletsModal = () => {
 
     const { setUserAssets } = useContext(GlobalContext);
 
-    console.log("Providers here>>>>", providers, activeAccount, clients);
 
     const getClient = (id?: PROVIDER_ID): WalletClient => {
         if (!id) throw new Error('Provider ID is missing.')
@@ -50,8 +49,6 @@ const WalletsModal = () => {
 
 
     useEffect(() => {
-
-        console.log("Active Account and gas Assets is called", activeAccount);
 
         if (activeAccount) {
             getAssets();

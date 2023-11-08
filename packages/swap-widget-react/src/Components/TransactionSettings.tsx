@@ -1,11 +1,15 @@
 import React from 'react';
 import { IoMdRemove } from "react-icons/io";
 import { IoIosAdd } from "react-icons/io";
+import { SwapContext } from '../context/SwapContext';
 
-const TransactionSettings = ({
-    slippageValue,
-    setSlippageValue
-}: any) => {
+const TransactionSettings = () => {
+
+    const {
+        setSlippageValue,
+        slippageValue
+    } = React.useContext(SwapContext);
+
     return (
         <div className="ui-bg-[#005654] ui-w-full ui-p-10 ui-border-2 ui-border-[#03a39f]">
             <div className="ui-flex ui-justify-between">

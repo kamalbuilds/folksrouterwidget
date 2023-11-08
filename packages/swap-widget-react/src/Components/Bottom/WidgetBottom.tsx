@@ -8,9 +8,6 @@ const WidgetBottom = ({
 
     const { providers, connectedAccounts, connectedActiveAccounts, activeAccount, clients, isActive } = useWallet()
 
-    console.log("Providers in widget Bottom", providers, activeAccount, clients, isActive);
-
-
     return (
         <div>
             {activeAccount ? <button

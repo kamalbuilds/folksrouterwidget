@@ -12,7 +12,6 @@ const ProfileSettings = () => {
         if (!id) throw new Error('Provider ID is missing.')
 
         const walletClient = clients?.[id]
-        console.log("Wallet Client", walletClient);
         setProvider(walletClient);
 
         if (!walletClient) throw new Error(`Client not found for ID: ${id}`)
@@ -34,26 +33,20 @@ const ProfileSettings = () => {
 
             const activeProvider = providers?.filter((provider) => {
                 if (provider.metadata.id === walletClient.metadata.id) {
-                    console.log("Provider inside loop", provider, walletClient);
                     return provider
                 }
             })
 
             if (activeProvider?.length > 0) {
-                console.log("wallet Client in Settings page>>>>>>>>", walletClient, activeProvider)
                 await activeProvider[0].disconnect();
             }
 
 
-            console.log("Disconnected", isActive);
         } catch (e) {
             console.error(e)
         }
     }
 
-    console.log("provider", provider)
-
-    console.log("TokenObject", TokenObject);
 
     const getAssets = async () => {
         if (!activeAccount) throw new Error('No selected account.')
@@ -77,9 +70,6 @@ const ProfileSettings = () => {
 
 
         })
-        console.log("AssetsOfUser", AssetsOfUser, TokenObject,)
-
-
         return await walletClient?.getAssets(activeAccount.address)
     }
 

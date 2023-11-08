@@ -13,16 +13,6 @@ const AlgoConnect = ({
 
     const { isOpen, onOpen, onClose } = useDisclosure();
 
-    // const clients = useContext(ClientContext)
-
-    React.useEffect(() => {
-        console.log('connected accounts', connectedAccounts)
-        console.log('connected and active accounts', connectedActiveAccounts)
-        console.log('active account', activeAccount)
-    })
-
-    // const ClientContext = createContext<SupportedProviders | null>(null)
-
     const getClient = (id?: PROVIDER_ID): WalletClient => {
         if (!id) throw new Error('Provider ID is missing.')
 
@@ -59,8 +49,6 @@ const AlgoConnect = ({
 
         return await walletClient?.getAssets(activeAccount.address)
     }
-
-    console.log("Provider", providers)
 
     const handleConnect = () => {
         onOpen();
