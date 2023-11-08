@@ -1,10 +1,4 @@
-// @ts-nocheck
-import goBTC from "../assets/avatars/goBTC.png";
-import gAlgo from "../assets/avatars/gAlgo.png";
-import algo from "../assets/avatars/icon.png";
-import goETH from "../assets/avatars/goETH.png";
-import USDt from "../assets/avatars/USDt.png";
-import USDC from "../assets/avatars/USDC.png";
+
 
 
 export type I_TokenList = {
@@ -22,8 +16,7 @@ export const TokenObject = {
         assetId: 0,
         assetDecimal: 6,
         amount: 0,
-        src: algo
-        // src: gAlgo,
+        src: "https://github.com/tinymanorg/asa-list/blob/review/assets/ALGO/icon.png?raw=true"
 
     },
     167184545: {
@@ -32,7 +25,7 @@ export const TokenObject = {
         assetId: 167184545,
         assetDecimal: 6,
         amount: 0,
-        src: gAlgo
+        src: "https://github.com/tinymanorg/asa-list/blob/review/assets/gALGO-793124631/icon.png?raw=true"
 
     },
     67395862: {
@@ -41,7 +34,7 @@ export const TokenObject = {
         assetId: 67395862,
         assetDecimal: 6,
         amount: 0,
-        src: USDC
+        src: "https://github.com/tinymanorg/asa-list/blob/review/assets/USDC-31566704/icon.png?raw=true"
 
     },
     67396430: {
@@ -50,7 +43,7 @@ export const TokenObject = {
         assetId: 67396430,
         assetDecimal: 6,
         amount: 0,
-        src: USDt
+        src: "https://github.com/tinymanorg/asa-list/blob/review/assets/USDt-312769/icon.png?raw=true"
 
     },
     67396528: {
@@ -59,7 +52,7 @@ export const TokenObject = {
         assetId: 67396528,
         assetDecimal: 8,
         amount: 0,
-        src: goBTC
+        src: "https://github.com/tinymanorg/asa-list/blob/review/assets/goBTC-386192725/icon.png?raw=true"
     },
     76598897: {
         label: 'goETH',
@@ -67,7 +60,7 @@ export const TokenObject = {
         assetId: 76598897,
         assetDecimal: 8,
         amount: 0,
-        src: goETH
+        src: "https://github.com/tinymanorg/asa-list/blob/review/assets/goETH-386195940/icon.png?raw=true"
 
     }
 }
@@ -78,22 +71,21 @@ const TokenList: I_TokenList[] = [
         title: 'Algo',
         assetId: 0,
         assetDecimal: 6,
-        src: algo
-        // src: gAlgo,
+        src: "https://github.com/tinymanorg/asa-list/blob/review/assets/ALGO/icon.png?raw=true"
     },
     {
         label: 'gALGO',
         title: 'gALGO',
         assetId: 167184545,
         assetDecimal: 6,
-        src: gAlgo
+        src: "https://github.com/tinymanorg/asa-list/blob/review/assets/gALGO-793124631/icon.png?raw=true"
     },
     {
         label: 'USDC',
         title: 'USD Coin',
         assetId: 67395862,
         assetDecimal: 6,
-        src: USDC
+        src: "https://github.com/tinymanorg/asa-list/blob/review/assets/USDC-31566704/icon.png?raw=true"
 
     },
     {
@@ -101,7 +93,7 @@ const TokenList: I_TokenList[] = [
         title: 'Tether',
         assetId: 67396430,
         assetDecimal: 6,
-        src: USDt
+        src: "https://github.com/tinymanorg/asa-list/blob/review/assets/USDt-312769/icon.png?raw=true"
 
     },
     {
@@ -109,14 +101,14 @@ const TokenList: I_TokenList[] = [
         title: 'Bitcoin',
         assetId: 67396528,
         assetDecimal: 8,
-        src: goBTC
+        src: "https://github.com/tinymanorg/asa-list/blob/review/assets/goBTC-386192725/icon.png?raw=true"
     },
     {
         label: 'goETH',
         title: 'Ethereum',
         assetId: 76598897,
         assetDecimal: 8,
-        src: goETH
+        src: "https://github.com/tinymanorg/asa-list/blob/review/assets/goETH-386195940/icon.png?raw=true"
     },
 
 ]

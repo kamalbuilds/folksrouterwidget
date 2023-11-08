@@ -19,6 +19,8 @@ const InputContainer = ({
 
     const [filteredTokenList, setFilteredTokenList] = React.useState(TokenList);
 
+    const [assetsOfUser, setAssetsOfUser] = React.useState(TokenList);
+
     const {
         clients,
         activeAccount
@@ -28,6 +30,7 @@ const InputContainer = ({
 
     const getUsersAssets = async () => {
         const usersAssets = await getAssets();
+
 
         console.log("User Assets", usersAssets, TokenList);
 
