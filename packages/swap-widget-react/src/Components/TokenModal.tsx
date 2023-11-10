@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Input } from '@chakra-ui/react';
+import { Image, Input } from '@chakra-ui/react';
 import { I_TokenList } from '../constants/TokenList';
-
+import Token from './RenderToken/Token';
 
 
 const TokenModal = ({
@@ -22,10 +22,8 @@ const TokenModal = ({
         const sortedTokenList = tokenList.filter((token: any) =>
             token.label.toLowerCase().includes(value?.toLowerCase())
         );
-        console.log("Sorted Token List", sortedTokenList);
         setListOfTokens(sortedTokenList);
     }
-
 
     return (
         <div className='ui-text-white'>
@@ -42,13 +40,7 @@ const TokenModal = ({
                             }}
                             key={token.assetId}
                             className='ui-text-white ui-flex ui-items-center ui-py-4 ui-px-4 ui-cursor-pointer ui-my-2 hover:ui-bg-[#486586] hover:ui-text-white'>
-                            <div className='leftTokenContainer ui-mr-4'>
-                                <img src={token.src} className='ui-w-[30px] ui-h-[30px]' />
-                            </div>
-                            <div className='ui-flex ui-flex-col ui-items-baseline'>
-                                <div className=''>{token.title}</div>
-                                <div>{token.label}</div>
-                            </div>
+                            <Token token={token} />
                         </div>
                     )
                 })}

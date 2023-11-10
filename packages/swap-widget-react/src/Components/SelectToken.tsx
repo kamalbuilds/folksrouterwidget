@@ -2,18 +2,17 @@ import React from 'react';
 import { RiArrowDropDownLine } from "react-icons/ri";
 
 const SelectToken = ({
-    id,
     openTokenModal,
     token
 }: any) => {
 
     return (
         <div className="ui-flex ui-flex-col ui-justify-center ui-min-w-[130px]">
-            <div onClick={() => openTokenModal(id)} className="ui-flex ui-justify-between ui-cursor-pointer ui-rounded-xl ui-items-center ui-flex-row ui-gap-2 ui-bg-gray-700 ui-border ui-border-gray-400 ui-px-[10px] ui-py-[8px]">
+            <div onClick={() => openTokenModal()} className="ui-flex ui-justify-between ui-cursor-pointer ui-rounded-xl ui-items-center ui-flex-row ui-gap-2 ui-bg-gray-700 ui-border ui-border-gray-400 ui-px-[10px] ui-py-[8px]">
 
                 {token && <div>
                     <img className='rounded-3xl'
-                        src='https://user-images.githubusercontent.com/67144388/252993005-c5d02152-8ff6-400f-97f7-f867878ccb5f.png'
+                        src={token.src}
                         alt='USDC'
                         width={25}
                         height={25}
