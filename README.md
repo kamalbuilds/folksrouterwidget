@@ -1,74 +1,41 @@
-# Turborepo Tailwind CSS starter
+# Folks Swap Widget
 
-This is an official starter Turborepo.
+## Overview
 
-## Using this example
+Welcome to the Folks Swap Widget! I'm thrilled to introduce this powerful and flexible tool, designed for seamless asset swapping on the Algorand blockchain. Our widget is packed with features to enhance your user experience, streamline transactions, and provide a visually appealing interface for both web and mobile applications.
 
-Run the following command:
+## Development and Technologies
 
-```sh
-npx create-turbo@latest -e with-tailwind
-```
+### Monorepo Structure
 
-## What's inside?
+Organized for flexibility and scalability:
 
-This Turborepo includes the following packages/apps:
+- **/apps/swap-widget-website:** Web application deployment.
+- **/packages/swap-widget-react:** React component for easy integration.
+- **/packages/swap-widget-js:** Communication library for diverse technology stacks.
 
-### Apps and Packages
+This approach ensures a scalable and maintainable solution for projects of varying technologies.
 
-- `docs`: a [Next.js](https://nextjs.org/) app with [Tailwind CSS](https://tailwindcss.com/)
-- `web`: another [Next.js](https://nextjs.org/) app with [Tailwind CSS](https://tailwindcss.com/)
-- `ui`: a stub React component library with [Tailwind CSS](https://tailwindcss.com/) shared by both `web` and `docs` applications
-- `eslint-config-custom`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `tsconfig`: `tsconfig.json`s used throughout the monorepo
+## Core Features with their Description
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Building packages/ui
-
-This example is setup to build `packages/ui` and output the transpiled source and compiled styles to `dist/`. This was chosen to make sharing one `tailwind.config.js` as easy as possible, and to ensure only the CSS that is used by the current application and its dependencies is generated.
-
-Another option is to consume `packages/ui` directly from source without building. If using this option, you will need to update your `tailwind.config.js` to be aware of your package locations, so it can find all usages of the `tailwindcss` class names.
-
-For example, in [tailwind.config.js](packages/tailwind-config/tailwind.config.js):
-
-```js
-  content: [
-    // app content
-    `src/**/*.{js,ts,jsx,tsx}`,
-    // include packages if not transpiling
-    "../../packages/**/*.{js,ts,jsx,tsx}",
-  ],
-```
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [Tailwind CSS](https://tailwindcss.com/) for styles
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+| **Feature**                   | **Description**                                                                                                                                                                                                                                                                                                             |
+|-------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Wallet Connectivity**       | Easily connect your wallet using [TxnLab's use-wallet](https://github.com/TxnLab/use-wallet/tree/main). The widget supports direct wallet integration or, if your protocol has its own infrastructure, facilitates the exchange of unsigned transactions.                                                                             |
+| **API Utilization**           | Harness the power of Folks Router's APIs for fetching swap quotations and related transactions.                                                                                                                                                                                                                              |
+| **Themes**                    | Choose between light and dark themes, with easy customization options for you.                                                                                                                                                                                                                                               |
+| **Swap Modes**                | Dynamic swap modes allow you to execute "fixed input" or "fixed output" swaps based on the last manually entered value.                                                                                                                                                                                                    |
+| **API Request Debouncing**    | Debounce API calls when you manually input values for a smoother experience.                                                                                                                                                                                                                                                 |
+| **Automatic Quotation Updates** | Stay informed with automatic quotation updates at regular intervals, complete with a countdown or indicator for transparency.                                                                                                                                                                                               |
+| **Asset Selection**           | Select from a preset list of assets or manually input an asset ID. Display asset information, including name, icon, and wallet amount.                                                                                                                                                                                      |
+| **Simulate Swap**             | Even without a connected wallet, you can enter arbitrary amounts for simulation, with a clear indication of the reason for any disabled swap button.                                                                                                                                                                       |
+| **Invert Selected Assets**    | Swap the two selected assets effortlessly with a single click.                                                                                                                                                                                                                                                              |
+| **Dollar Prices**             | View dollar values based on the amounts used, with multi-currency support.                                                                                                                                                                                                                                                  |
+| **Swap Routes**               | Visualize swap routes with an intuitive accordion interface.                                                                                                                                                                                                                                                               |
+| **Handle Opt-in**             | Efficiently handle opt-in transactions if required by your connected wallet.                                                                                                                                                                                                                                               |
+| **Gas Fee Management**        | We'll warn you if you lack sufficient funds to cover gas fees, preventing failed transactions.                                                                                                                                                                                                                               |
+| **Compatibility**             | Our widget seamlessly integrates with both web and mobile contexts and is not restricted to React applications.                                                                                                                                                                                                              |
 
 
->>> Success! Your new Turborepo is ready.
-Inside this directory, you can run several commands:
+## About Folks Finance
 
-  yarn run build
-     Build all apps and packages
-
-  yarn run dev
-     Develop all apps and packages
-
-  yarn run lint
-     Lint all apps and packages
-
-Turborepo will cache locally by default. For an additional
-speed boost, enable Remote Caching with Vercel by
-entering the following command:
-
-  npx turbo login
-
-We suggest that you begin by typing:
-
-  npx turbo login
+We are Folks Finance, a leading DeFi platform, revolutionizing lending, borrowing, trading, and asset management on the Algorand blockchain. Our user-centric approach combines DeFi innovation with a competitive UI/UX, all powered by permissionless smart contract technology. Join us in shaping the future of decentralized finance!
