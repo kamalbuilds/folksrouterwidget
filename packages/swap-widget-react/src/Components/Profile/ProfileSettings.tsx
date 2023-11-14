@@ -2,7 +2,9 @@ import { PROVIDER_ID, WalletClient, useWallet } from '@txnlab/use-wallet';
 import React, { useEffect, useState } from 'react';
 import { TokenObject } from '../../constants/TokenList';
 
-const ProfileSettings = () => {
+const ProfileSettings = ({
+    onClose
+}: any) => {
     const { providers, connectedAccounts, connectedActiveAccounts, activeAccount, clients, isActive } = useWallet()
 
     const [provider, setProvider] = useState<any>();
@@ -104,6 +106,7 @@ const ProfileSettings = () => {
                     {activeAccount && <div className=' ui-flex ui-items-center ui-justify-center'>
                         <button className='ui-border-[#03a39f] ui-border ui-bg-[#005654] ui-rounded-md hover:ui-bg-[#03a39f] ui-px-[18px] ui-py-[7px]' onClick={() => {
                             disconnect(activeAccount.providerId);
+                            onClose()
                         }}>Disconnect</button>
                     </div>}
                 </>

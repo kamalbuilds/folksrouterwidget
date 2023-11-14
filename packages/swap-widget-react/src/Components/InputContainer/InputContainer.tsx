@@ -29,6 +29,7 @@ const InputContainer = ({
     const { getAssets } = useContext(GlobalContext);
 
     const getUsersAssets = async () => {
+
         const usersAssets = await getAssets(TokenObject);
 
         const TokensObjectValues = Object.values(usersAssets);
@@ -41,6 +42,8 @@ const InputContainer = ({
     useEffect(() => {
         if (activeAccount) {
             getUsersAssets();
+        } else {
+            setFilteredTokenList(TokenList)
         }
     }, [activeAccount])
 
@@ -56,8 +59,12 @@ const InputContainer = ({
         setTokenOne,
         setTokenOneAmount,
         setTokenTwoAmount,
+        setShowInterval,
+        showInterval,
         getDataWhenTokensChanged,
-        getTokenAmount
+        getTokenAmount,
+        inputTokenAmountInUSD,
+        setInputTokenAmountInUSD,
     } = React.useContext(SwapContext);
 
 
@@ -117,8 +124,6 @@ const InputContainer = ({
     const [tokenBalance, setTokeBalance] = useState(0);
     const [tokenAmountInUSD, setTokenAmountInUSD] = useState(0);
 
-    const [inputTokenAmountInUSD, setInputTokenAmountInUSD] = useState(0);
-
     const getBalanceDetails = () => {
         if (tokenOne) {
             const tokenDecimal = tokenOne.assetDecimal;
@@ -145,6 +150,14 @@ const InputContainer = ({
         }
 
     }, [tokenOneAmount, tokenOne])
+
+
+    const handleOpenTokenModal = () => {
+        if (showInterval) {
+            setShowInterval(false);
+        }
+        onOpen();
+    }
 
 
     return (
@@ -182,19 +195,19 @@ const InputContainer = ({
                     />
 
                     <SelectToken
-                        openTokenModal={onOpen}
+                        openTokenModal={handleOpenTokenModal}
                         token={tokenOne}
                     />
                 </div>
 
                 <div className="ui-flex ui-flex-row ui-justify-between ui-text-gray-400">
                     <div className="">
-                        <span className="ui-text-[20px]">${inputTokenAmountInUSD.toFixed(2)}</span>
+                        <span className="ui-text-[20px]">${inputTokenAmountInUSD?.toFixed(2)}</span>
                     </div>
                     <div>
                         {activeAccount && <div className="ui-flex ui-flex-row ui-gap-[4px] ui-items-center">
                             <FaWallet />
-                            <div>{tokenBalance.toFixed(4)}</div>
+                            <div>{tokenBalance ? tokenBalance.toFixed(4) : 0}</div>
                         </div>}
                     </div>
                 </div>

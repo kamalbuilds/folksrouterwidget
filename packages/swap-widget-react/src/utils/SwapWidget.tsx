@@ -1,22 +1,14 @@
 "use client"
 import * as React from "react";
-import { IoSettingsSharp } from "react-icons/io5";
 import { MdSwapVerticalCircle } from "react-icons/md";
-import { ChakraProvider, Flex, useColorMode } from '@chakra-ui/react'
-import { Button, Input, InputGroup, InputLeftAddon, InputLeftElement, InputRightElement, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, useDisclosure } from '@chakra-ui/react';
-// import TokenModal from "./Components/TokenModal";
-import TokenList, { I_TokenList, TokenObject } from "../constants/TokenList";
-import { IoIosCloseCircleOutline } from "react-icons/io";
-import algosdk, { decodeUnsignedTransaction } from "algosdk";
+import TokenList, { TokenObject } from "../constants/TokenList";
 import { TestnetAlgodClient } from "../utils/config";
 import TransactionSettings from "../Components/TransactionSettings";
-import AlgoConnect from "../Components/AlgoConnect/AlgoConnect";
 import WidgetBottom from "../Components/Bottom/WidgetBottom";
 import WidgetHeader from "../Components/Header/WidgetHeader";
 import InputContainer from "../Components/InputContainer/InputContainer";
 import OutputContainer from "../Components/OutputContainer/OutputContainer";
 import { SwapContext } from "../context/SwapContext";
-import TokenModal from "../Components/TokenModal";
 import { useWallet } from "@txnlab/use-wallet";
 import { GlobalContext } from "../context/GlobalContext";
 
@@ -45,9 +37,11 @@ const SwapWidget = () => {
         setTokenTwo,
         setTokenTwoAmount,
         setShowInterval,
-        setSelectedToken,
         getTokenAmount,
-        slippageValue
+        slippageValue,
+        setPriceImpact,
+        setInputTokenAmountInUSD,
+        setOutputTokenAmountInUSD
     } = React.useContext(SwapContext);
 
 
@@ -56,6 +50,9 @@ const SwapWidget = () => {
         if (showInterval) {
             setShowInterval(false);
         }
+        setInputTokenAmountInUSD(0);
+        setOutputTokenAmountInUSD(0);
+        setPriceImpact(0);
         setTokenTwo(tokenOne);
         setTokenOne(tokenTwo);
         setTokenOneAmount(0);
@@ -73,6 +70,7 @@ const SwapWidget = () => {
         const response = await fetch(url);
         const res = await response.json();
         const { result } = res;
+        setShowInterval(false);
         // @ts-ignore
         const unsignedTxns = result.map(txn => Buffer.from(txn, "base64"));
         const signedTransactions = await signTransactions(unsignedTxns);
@@ -122,6 +120,7 @@ const SwapWidget = () => {
 
     const changeTokenOneAmount = async (value: any) => {
 
+        setShowInterval(false);
         const tokenAmount = value;
         setTokenOneAmount(tokenAmount);
 
@@ -142,6 +141,7 @@ const SwapWidget = () => {
     }
 
     const changeTokenTwoAmount = async (value: any) => {
+        setShowInterval(false);
         const tokenAmount = value;
         setTokenTwoAmount(tokenAmount);
 
@@ -167,6 +167,8 @@ const SwapWidget = () => {
         if (showInterval) {
             let timer: string | number | NodeJS.Timeout | undefined;
 
+            setTime(20);
+            setProgress(0);
             const startTimer = () => {
                 timer = setInterval(() => {
                     setTime((prevTime) => {
@@ -196,7 +198,8 @@ const SwapWidget = () => {
                 clearInterval(timeout);
             };
         }
-    }, [showInterval]); // Empty dependency array ensures useEffect runs only once on mount
+    }, [showInterval, tokenTwoAmount, tokenOneAmount]); // Empty dependency array ensures useEffect runs only once on mount
+
 
     return (
         <>

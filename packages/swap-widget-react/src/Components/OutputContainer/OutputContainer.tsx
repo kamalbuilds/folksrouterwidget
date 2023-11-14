@@ -26,6 +26,10 @@ const OutputContainer = ({
         setTokenTwoAmount,
         getDataWhenTokensChanged,
         setSelectedToken,
+        showInterval,
+        setShowInterval,
+        outputTokenAmountInUSD,
+        setOutputTokenAmountInUSD,
         getTokenAmount
     } = React.useContext(SwapContext);
 
@@ -75,7 +79,7 @@ const OutputContainer = ({
     const [tokenBalance, setTokeBalance] = useState(0);
     const [tokenAmountInUSD, setTokenAmountInUSD] = useState(0);
 
-    const [inputTokenAmountInUSD, setInputTokenAmountInUSD] = useState(0);
+    // const [inputTokenAmountInUSD, setInputTokenAmountInUSD] = useState(0);
 
     const getBalanceDetails = () => {
         if (tokenTwo) {
@@ -88,7 +92,7 @@ const OutputContainer = ({
 
             if (tokenTwoAmount) {
                 const tokenAmountInUSD = (tokenTwoAmount * priceOfUsd)
-                setInputTokenAmountInUSD(tokenAmountInUSD);
+                setOutputTokenAmountInUSD(tokenAmountInUSD);
 
             }
 
@@ -103,6 +107,13 @@ const OutputContainer = ({
         }
 
     }, [tokenTwoAmount, tokenTwo])
+
+    const handleOpenTokenModal = () => {
+        if (showInterval) {
+            setShowInterval(false);
+        }
+        onOpen();
+    }
 
     return (
         <div>
@@ -140,14 +151,14 @@ const OutputContainer = ({
                     />
 
                     <SelectToken
-                        openTokenModal={onOpen}
+                        openTokenModal={handleOpenTokenModal}
                         token={tokenTwo}
                     />
                 </div>
 
                 <div className="ui-flex ui-flex-row ui-justify-between ui-text-gray-400">
                     <div className="">
-                        <span className="ui-text-[20px]">${inputTokenAmountInUSD.toFixed(2)}</span>
+                        <span className="ui-text-[20px]">${outputTokenAmountInUSD?.toFixed(2)}</span>
                     </div>
                 </div>
             </div>

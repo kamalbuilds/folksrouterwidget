@@ -11,6 +11,8 @@ type I_SwapContext = {
     slippageValue: number,
     showInterval: boolean,
     priceImpact: number,
+    inputTokenAmountInUSD: number,
+    outputTokenAmountInUSD: number,
     setTokenOne: (tokenOne: I_TokenList | undefined) => void,
     setTokenOneAmount: (tokenOneAmount: number) => void,
     setTokenTwo: (tokenTwo: I_TokenList | undefined) => void,
@@ -19,7 +21,13 @@ type I_SwapContext = {
     setSelectedToken: (selectedToken: I_TokenList | undefined) => void,
     setSlippageValue: (slippageValue: number) => void;
     setShowInterval: (showInterval: boolean,) => void;
+    setPriceImpact: (priceImpact: number) => void;
+    setOutputTokenAmountInUSD: (outputTokenAmountInUSD: number,) => void;
+    setInputTokenAmountInUSD: (inputTokenAmountInUSD: number,) => void;
     getTokenAmount: any,
+    getDataWhenTokensChanged: any,
+
+
 }
 
 const initialValue = {
@@ -32,6 +40,8 @@ const initialValue = {
     slippageValue: 0,
     showInterval: false,
     priceImpact: 0,
+    inputTokenAmountInUSD: 0,
+    outputTokenAmountInUSD: 0,
     setTokenOne: () => { },
     setTokenOneAmount: () => { },
     setTokenTwo: () => { },
@@ -40,7 +50,11 @@ const initialValue = {
     setSelectedToken: () => { },
     setSlippageValue: () => { },
     setShowInterval: () => { },
-    getTokenAmount: null
+    setPriceImpact: () => { },
+    setOutputTokenAmountInUSD: () => { },
+    setInputTokenAmountInUSD: () => { },
+    getTokenAmount: null,
+    getDataWhenTokensChanged: null,
 
 }
 
@@ -57,10 +71,14 @@ const SwapContextProvider = ({ children }: any) => {
     const [selectedToken, setSelectedToken] = React.useState<I_TokenList>();
 
     const [txnPayload, setTxnPayload] = React.useState<string>();
-    const [priceImpact, setPriceImpact] = React.useState();
+    const [priceImpact, setPriceImpact] = React.useState(0);
     const [slippageValue, setSlippageValue] = React.useState(50);
 
     const [showInterval, setShowInterval] = React.useState(false);
+
+    const [inputTokenAmountInUSD, setInputTokenAmountInUSD] = React.useState(0);
+    const [outputTokenAmountInUSD, setOutputTokenAmountInUSD] = React.useState(0);
+
 
 
     const fetchQuote = async (tokenAmount: number, InputToken: any, OutputToken: any, type: string) => {
@@ -86,6 +104,7 @@ const SwapContextProvider = ({ children }: any) => {
     const getTokenAmount = async (tokenAmount: any, InputToken: any, OutputToken: any, type: string) => {
 
         if (tokenOne && tokenTwo && tokenAmount) {
+
             const res = await fetchQuote(tokenAmount, InputToken, OutputToken, type);
             const { quoteAmount } = res.result;
             return quoteAmount;
@@ -111,6 +130,7 @@ const SwapContextProvider = ({ children }: any) => {
         }
 
         if (decimalTokenAmount) {
+
             const response = await fetchQuote(decimalTokenAmount, InputToken, OutputToken, type);
 
             if (response) {
@@ -124,8 +144,6 @@ const SwapContextProvider = ({ children }: any) => {
     }
 
 
-
-
     return (
         <SwapContext.Provider value={{
             tokenOne,
@@ -137,6 +155,11 @@ const SwapContextProvider = ({ children }: any) => {
             slippageValue,
             showInterval,
             priceImpact,
+            inputTokenAmountInUSD,
+            outputTokenAmountInUSD,
+            setPriceImpact,
+            setOutputTokenAmountInUSD,
+            setInputTokenAmountInUSD,
             setTokenOne,
             setTokenOneAmount,
             setTokenTwo,

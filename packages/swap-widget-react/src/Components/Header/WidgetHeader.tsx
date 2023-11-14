@@ -25,7 +25,7 @@ const WidgetHeader = () => {
                     </ModalHeader>
 
                     <ModalBody p={0}>
-                        <ProfileSettings />
+                        <ProfileSettings onClose={onClose} />
                     </ModalBody>
                 </ModalContent>
             </Modal>
