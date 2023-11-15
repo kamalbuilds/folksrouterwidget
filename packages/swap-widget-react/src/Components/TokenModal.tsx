@@ -35,7 +35,6 @@ const TokenModal = ({
                     return (
                         <div
                             onClick={() => {
-                                console.log("Clicked")
                                 selectToken(token);
                             }}
                             key={token.assetId}

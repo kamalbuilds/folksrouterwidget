@@ -53,7 +53,6 @@ const WalletsModal = () => {
         <div className='ui-px-[10px]'>
 
             {providers?.map((provider) => {
-                console.log("provider >>>>>>>", provider)
                 return (
                     <div className='ui-p-[14px] ui-rounded-lg ui-cursor-pointer hover:ui-bg-gray-800'
                         onClick={provider.connect}

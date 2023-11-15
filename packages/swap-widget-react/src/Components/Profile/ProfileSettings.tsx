@@ -4,7 +4,6 @@ import { TokenObject } from '../../constants/TokenList';
 
 const ProfileSettings = () => {
     const { providers, connectedAccounts, connectedActiveAccounts, activeAccount, clients, isActive } = useWallet()
-    // const {} = useWalletStore()
 
     const [provider, setProvider] = useState<any>();
 

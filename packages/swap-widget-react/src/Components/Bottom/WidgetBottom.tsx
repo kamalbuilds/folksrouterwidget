@@ -9,10 +9,10 @@ const WidgetBottom = ({
     const { providers, connectedAccounts, connectedActiveAccounts, activeAccount, clients, isActive } = useWallet()
 
     return (
-        <div>
+        <div className='ui-my-4'>
             {activeAccount ? <button
                 onClick={handleSwapButton}
-                className="ui-rounded-lg ui-bg-blue-500 hover:ui-bg-violet-800 ui-px-4 ui-py-2 ui-cursor-pointer">
+                className=" ui-rounded-lg ui-bg-blue-500 hover:ui-bg-violet-800 ui-px-4 ui-py-2 ui-cursor-pointer">
                 Swap
             </button>
                 :

@@ -9,7 +9,7 @@ import { SwapContext } from '../../context/SwapContext';
 import TokenList, { I_TokenList } from '../../constants/TokenList';
 
 const OutputContainer = ({
-    // filteredTokenList,
+    changeTokenTwoAmount
 }: any) => {
 
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -29,24 +29,6 @@ const OutputContainer = ({
         getTokenAmount
     } = React.useContext(SwapContext);
 
-
-    const changeTokenTwoAmount = async (value: any) => {
-        const tokenAmount = value;
-        setTokenTwoAmount(tokenAmount);
-
-        const tokenTwoDecimal = tokenTwo?.assetDecimal;
-        const tokenOneDecimal = tokenOne?.assetDecimal;
-        const decimalTokenAmount = tokenAmount * (10 ** tokenTwoDecimal);
-
-        const quoteAmount = await getTokenAmount(decimalTokenAmount, tokenOne, tokenTwo, 'FIXED_OUTPUT');
-
-        const fetchedAmount = quoteAmount / (10 ** tokenOneDecimal);
-
-        if (fetchedAmount) {
-            setTokenOneAmount(fetchedAmount);
-        }
-
-    }
 
     const handleTokenSelection = async (token: I_TokenList) => {
         setTokenTwo(token);
@@ -149,7 +131,7 @@ const OutputContainer = ({
 
             <p className="ui-text-[16px]  ui-text-gray-500">You Receive</p>
 
-            <div className="ui-flex ui-bg-[#1E293B]  ui-border-gray-400 ui-border ui-px-4 ui-py-2 ui-rounded-xl ui-flex-col ui-gap-4">
+            <div className="ui-flex ui-bg-gray-700  ui-border-gray-400 ui-border ui-px-4 ui-py-2 ui-rounded-xl ui-flex-col ui-gap-4">
                 <div className="ui-flex ui-justify-between">
                     <InputTokenAmount
                         tokenAmount={tokenTwoAmount}

@@ -69,7 +69,7 @@ const AlgoConnect = ({
 
 
 
-            <button className='ui-border ui-border-gray-400 ui-px-4 ui-py-2 ui-my-4'
+            <button className='ui-border ui-rounded-lg hover:ui-bg-gray-400 ui-border-gray-400 ui-px-4 ui-py-2 ui-my-4'
                 onClick={handleConnect}>
                 Connect
             </button>

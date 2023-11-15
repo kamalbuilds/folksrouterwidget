@@ -24,7 +24,6 @@ const GlobalContextProvider = ({ children }: any) => {
         if (!id) throw new Error('Provider ID is missing.')
 
         const walletClient = clients?.[id]
-        console.log("Wallet Client", walletClient, connectedAccounts, activeAccount, connectedActiveAccounts);
 
         if (!walletClient) throw new Error(`Client not found for ID: ${id}`)
 
@@ -37,20 +36,16 @@ const GlobalContextProvider = ({ children }: any) => {
 
         const accountInfo = await walletClient?.getAccountInfo(activeAccount.address)
 
-        console.log("Account info", accountInfo, walletClient);
-
         return accountInfo
     }
 
     const fetchPricesOfAssets = async () => {
         let asset: any;
         for (asset in TokenObject) {
-            console.log("Asset", asset);
             // const assetId = asset?.mainnetAssetId;
             const assetId = TokenObject[asset].mainnetAssetId;
             if (assetId) {
                 const prices = await fetchPrices(assetId);
-                console.log("Prices", prices) // Call the API and get the prices for the corresponding assetId
                 if (prices) {
                     TokenObject[asset].price = prices; // Add the fetched price to the object
                 } else {
@@ -70,7 +65,6 @@ const GlobalContextProvider = ({ children }: any) => {
         const accountInfo = await getAccountInfo();
 
         const asset = await walletClient?.getAssets(activeAccount.address);
-        console.log("walletClient info", asset, accountInfo);
 
         let algoAsset;
         if (accountInfo) {
@@ -84,7 +78,6 @@ const GlobalContextProvider = ({ children }: any) => {
         const totalAssets = [algoAsset, ...asset];
 
         const FinalTokenObject = await fetchPricesOfAssets();
-        console.log("FinalTokenObject", FinalTokenObject);
 
         const TokensObject = Object.keys(FinalTokenObject);
 
@@ -93,7 +86,6 @@ const GlobalContextProvider = ({ children }: any) => {
             AssetsOfUser = totalAssets.map((asset) => {
                 if (asset) {
                     const assetId = asset['asset-id'];
-                    console.log("Assetid", assetId);
 
                     FinalTokenObject[assetId]['amount'] = asset.amount;
 
@@ -106,7 +98,6 @@ const GlobalContextProvider = ({ children }: any) => {
 
             })
         }
-        console.log("AssetsOfUser in context", AssetsOfUser, TokenObject)
         return AssetsOfUser
     }
 

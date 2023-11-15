@@ -12,12 +12,14 @@ import { FaWallet } from "react-icons/fa";
 
 
 
-const InputContainer = () => {
+const InputContainer = ({
+    changeTokenOneAmount
+}: any) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
 
     const [assetsOfUser, setAssetsOfUser] = React.useState();
 
-    const [filteredTokenList, setFilteredTokenList] = React.useState();
+    const [filteredTokenList, setFilteredTokenList] = React.useState(TokenList);
 
     const {
         clients,
@@ -59,26 +61,6 @@ const InputContainer = () => {
     } = React.useContext(SwapContext);
 
 
-    const changeTokenOneAmount = async (value: any) => {
-
-        const tokenAmount = value;
-        setTokenOneAmount(tokenAmount);
-
-        const tokenOneDecimal = tokenOne?.assetDecimal;
-        const tokenTwoDecimal = tokenTwo?.assetDecimal;
-
-        const decimalTokenAmount = tokenAmount * (10 ** tokenOneDecimal);
-
-        const quoteAmount = await getTokenAmount(decimalTokenAmount, tokenOne, tokenTwo, 'FIXED_INPUT');
-
-        const fetchedAmount = quoteAmount / (10 ** tokenTwoDecimal);
-
-        if (fetchedAmount) {
-            setTokenTwoAmount(fetchedAmount);
-        }
-
-    }
-
     const handleTokenSelection = async (token: I_TokenList) => {
         setSelectedToken(token);
         setTokenOne(token);
@@ -109,11 +91,21 @@ const InputContainer = () => {
     }
 
     const filterTokenList = () => {
-        const tokenlistFiltered = assetsOfUser.filter((token: any) => (
-            token.assetId !== selectedToken?.assetId
-        ))
+
+        let tokenlistFiltered;
+        if (activeAccount) {
+            tokenlistFiltered = assetsOfUser.filter((token: any) => (
+                token.assetId !== selectedToken?.assetId
+            ))
+        } else {
+            tokenlistFiltered = TokenList.filter((token: any) => (
+                token.assetId !== selectedToken?.assetId))
+        }
+
         setFilteredTokenList(tokenlistFiltered);
     }
+
+
 
     React.useEffect(() => {
         if (selectedToken) {
@@ -180,7 +172,7 @@ const InputContainer = () => {
             </Modal>
 
             <p className="ui-text-[16px] ui-text-gray-500">You Pay</p>
-            <div className="ui-flex ui-bg-[#1E293B]  ui-border-gray-400 ui-border ui-px-4 ui-py-2 ui-rounded-xl ui-flex-col ui-gap-4">
+            <div className="ui-flex ui-bg-gray-700  ui-border-gray-400 ui-border ui-px-4 ui-py-2 ui-rounded-xl ui-flex-col ui-gap-4">
                 <div className="ui-flex ui-justify-between">
 
                     <InputTokenAmount
@@ -200,10 +192,10 @@ const InputContainer = () => {
                         <span className="ui-text-[20px]">${inputTokenAmountInUSD.toFixed(2)}</span>
                     </div>
                     <div>
-                        <div className="ui-flex ui-flex-row ui-gap-[4px] ui-items-center">
+                        {activeAccount && <div className="ui-flex ui-flex-row ui-gap-[4px] ui-items-center">
                             <FaWallet />
                             <div>{tokenBalance.toFixed(4)}</div>
-                        </div>
+                        </div>}
                     </div>
                 </div>
             </div>
