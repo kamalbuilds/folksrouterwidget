@@ -17,13 +17,44 @@ const TokenModal = ({
         onClose();
     }
 
-    const handleSearch = (e: any) => {
+    const handleSearch = async (e: any) => {
         const value = e.target.value;
         const sortedTokenList = tokenList.filter((token: any) =>
             token.label.toLowerCase().includes(value?.toLowerCase())
         );
-        setListOfTokens(sortedTokenList);
+        if (sortedTokenList.length == 0) {
+            const assetFetched = await searchForAsset(value);
+            setListOfTokens(assetFetched);
+        } else {
+            setListOfTokens(sortedTokenList);
+
+        }
     }
+
+    const searchForAsset = async (value: any) => {
+        const url = `https://testnet-idx.algonode.cloud/v2/assets/${value}`;
+
+        const res = await fetch(url);
+        const response = await res.json();
+
+        const { params } = response.asset;
+        if (params) {
+
+            const token = [{
+                label: params['unit-name'],
+                title: params.name,
+                assetId: value,
+                assetDecimal: params.decimals,
+                src: '',
+                mainnetAssetId: null
+            }]
+
+            return token;
+        }
+
+
+    }
+
 
     return (
         <div className='ui-text-white'>

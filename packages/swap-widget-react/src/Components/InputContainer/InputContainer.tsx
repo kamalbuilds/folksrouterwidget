@@ -202,7 +202,7 @@ const InputContainer = ({
 
                 <div className="ui-flex ui-flex-row ui-justify-between ui-text-gray-400">
                     <div className="">
-                        <span className="ui-text-[20px]">${inputTokenAmountInUSD?.toFixed(2)}</span>
+                        <span className="ui-text-[20px]">${inputTokenAmountInUSD ? inputTokenAmountInUSD?.toFixed(2) : 0}</span>
                     </div>
                     <div>
                         {activeAccount && <div className="ui-flex ui-flex-row ui-gap-[4px] ui-items-center">

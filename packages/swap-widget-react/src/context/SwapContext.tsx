@@ -98,6 +98,7 @@ const SwapContextProvider = ({ children }: any) => {
             }
         } catch (error) {
             console.log("Error", error);
+            setShowInterval(false);
         }
     }
 

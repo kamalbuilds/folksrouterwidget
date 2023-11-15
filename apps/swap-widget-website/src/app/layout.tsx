@@ -19,8 +19,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-      <ConnectWallet />
-      {children}
+        {/* <ConnectWallet /> */}
+        {children}
       </body>
     </html>
   );

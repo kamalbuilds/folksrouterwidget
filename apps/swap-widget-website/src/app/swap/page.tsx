@@ -4,11 +4,8 @@ import SwapWidget from '../../components/Widget/SwapWidget';
 const SwapPage = () => {
     return (
         <div className='p-8'>
-
-            <div>Heading: This is from the client side.</div>
-
-            <div> Below this everything is from the package:</div>
-            <div className='h-[4px] w-[100%] bg-gray-600 rounded-lg'></div>
+            <div className='text-[32px] text-center mb-8'>Swap Widget Demo </div>
+            <div className='h-[4px] w-[100%] bg-gray-600 rounded-lg mb-8'></div>
             <SwapWidget />
         </div>
     );

@@ -49,36 +49,11 @@ const ProfileSettings = ({
     }
 
 
-    const getAssets = async () => {
-        if (!activeAccount) throw new Error('No selected account.')
-
-        const walletClient = getClient(activeAccount.providerId)
-
-        const asset = await walletClient?.getAssets(activeAccount.address);
-
-        const TokensObject = Object.keys(TokenObject);
-
-        const AssetsOfUser = asset.map((asset) => {
-            const assetId = asset['asset-id'];
-
-            TokenObject[assetId]['amount'] = asset.amount;
-
-            if (TokensObject.includes(assetId.toString())) {
-                return TokenObject[assetId];
-            }
-
-
-        })
-        return await walletClient?.getAssets(activeAccount.address)
-    }
-
-
     return (
-        <div className='ui-m-[20px]'>
+        <div className='ui-m-[15px]'>
+            <div className='ui-h-[2px] ui-w-full ui-bg-gray-400 ui-mb-8'></div>
             {provider && activeAccount && (
                 <>
-
-                    <div onClick={getAssets}>Get Assets</div>
 
                     <div className='ui-flex ui-gap-12 ui-items-center'>
                         <img className='ui-rounded-lg' src={provider.metadata.icon} alt='Image' width={80} height={80} />
