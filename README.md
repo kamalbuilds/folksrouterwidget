@@ -4,6 +4,10 @@
 
 Welcome to the Folks Swap Widget! I'm thrilled to introduce this powerful and flexible tool, designed for seamless asset swapping on the Algorand blockchain. Our widget is packed with features to enhance your user experience, streamline transactions, and provide a visually appealing interface for both web and mobile applications.
 
+Link to the slides -> https://docs.google.com/presentation/d/1fFAy0ZcY9Hovi51mFc8BFprUJU6fCgRJPtRhUrY4JKE/edit?usp=sharing
+
+![image](https://github.com/kamalbuilds/folksrouterwidget/assets/95926324/6bb39d17-1633-4207-9f85-e2aa821eb37d)
+
 ## Development and Technologies
 
 ### Monorepo Structure
