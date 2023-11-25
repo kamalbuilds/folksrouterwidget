@@ -18,7 +18,7 @@ Organized for flexibility and scalability:
 - **/packages/swap-widget-react:** React component for easy integration.
 - **/packages/swap-widget-js:** Communication library for diverse technology stacks.
 
-This approach ensures a scalable and maintainable solution for projects of varying technologies.
+This approach ensures a scalable and maintainable solution for our project.
 
 ## Core Features with their Description
 
