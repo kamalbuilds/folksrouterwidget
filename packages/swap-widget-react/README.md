@@ -4,22 +4,6 @@
 
 Welcome to the Folks Swap Widget! I'm thrilled to introduce this powerful and flexible tool, designed for seamless asset swapping on the Algorand blockchain. Our widget is packed with features to enhance your user experience, streamline transactions, and provide a visually appealing interface for both web and mobile applications.
 
-Link to the slides -> https://docs.google.com/presentation/d/1fFAy0ZcY9Hovi51mFc8BFprUJU6fCgRJPtRhUrY4JKE/edit?usp=sharing
-
-![image](https://github.com/kamalbuilds/folksrouterwidget/assets/95926324/6bb39d17-1633-4207-9f85-e2aa821eb37d)
-
-## Development and Technologies
-
-### Monorepo Structure
-
-Organized for flexibility and scalability:
-
-- **/apps/swap-widget-website:** Web application deployment.
-- **/packages/swap-widget-react:** React component for easy integration.
-- **/packages/swap-widget-js:** Communication library for diverse technology stacks.
-
-This approach ensures a scalable and maintainable solution for our project.
-
 ## Core Features with their Description
 
 | **Feature**                   | **Description**                                                                                                                                                                                                                                                                                                             |
@@ -42,4 +26,4 @@ This approach ensures a scalable and maintainable solution for our project.
 
 ## About Folks Finance
 
-We are Folks Finance, a leading DeFi platform, revolutionizing lending, borrowing, trading, and asset management on the Algorand blockchain. Our user-centric approach combines DeFi innovation with a competitive UI/UX, all powered by permissionless smart contract technology. Join us in shaping the future of decentralized finance!
+Folks Finance is a leading DeFi platform, revolutionizing lending, borrowing, trading, and asset management on the Algorand blockchain. Our user-centric approach combines DeFi innovation with a competitive UI/UX, all powered by permissionless smart contract technology. Join us in shaping the future of decentralized finance!

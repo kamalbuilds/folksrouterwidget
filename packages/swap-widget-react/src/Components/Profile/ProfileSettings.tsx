@@ -2,9 +2,10 @@ import { PROVIDER_ID, WalletClient, useWallet } from '@txnlab/use-wallet';
 import React, { useEffect, useState } from 'react';
 import { TokenObject } from '../../constants/TokenList';
 
-const ProfileSettings = () => {
+const ProfileSettings = ({
+    onClose
+}: any) => {
     const { providers, connectedAccounts, connectedActiveAccounts, activeAccount, clients, isActive } = useWallet()
-    // const {} = useWalletStore()
 
     const [provider, setProvider] = useState<any>();
 
@@ -48,36 +49,11 @@ const ProfileSettings = () => {
     }
 
 
-    const getAssets = async () => {
-        if (!activeAccount) throw new Error('No selected account.')
-
-        const walletClient = getClient(activeAccount.providerId)
-
-        const asset = await walletClient?.getAssets(activeAccount.address);
-
-        const TokensObject = Object.keys(TokenObject);
-
-        const AssetsOfUser = asset.map((asset) => {
-            const assetId = asset['asset-id'];
-
-            TokenObject[assetId]['amount'] = asset.amount;
-
-            if (TokensObject.includes(assetId.toString())) {
-                return TokenObject[assetId];
-            }
-
-
-        })
-        return await walletClient?.getAssets(activeAccount.address)
-    }
-
-
     return (
-        <div className='ui-m-[20px]'>
+        <div className='ui-m-[15px]'>
+            <div className='ui-h-[2px] ui-w-full ui-bg-gray-400 ui-mb-8'></div>
             {provider && activeAccount && (
                 <>
-
-                    <div onClick={getAssets}>Get Assets</div>
 
                     <div className='ui-flex ui-gap-12 ui-items-center'>
                         <img className='ui-rounded-lg' src={provider.metadata.icon} alt='Image' width={80} height={80} />
@@ -105,6 +81,7 @@ const ProfileSettings = () => {
                     {activeAccount && <div className=' ui-flex ui-items-center ui-justify-center'>
                         <button className='ui-border-[#03a39f] ui-border ui-bg-[#005654] ui-rounded-md hover:ui-bg-[#03a39f] ui-px-[18px] ui-py-[7px]' onClick={() => {
                             disconnect(activeAccount.providerId);
+                            onClose()
                         }}>Disconnect</button>
                     </div>}
                 </>

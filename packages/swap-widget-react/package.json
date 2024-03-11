@@ -1,6 +1,19 @@
 {
-  "name": "ui",
-  "version": "0.0.0",
+  "name": "folks-widget-react",
+  "description": "Folks Finance React Widget for Swapping on Algorand",
+  "version": "1.0.0",
+  "author": "Kamal Nayan Singh <geniusamansingh@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kamalbuilds/folksrouterwidget"
+  },
+  "keywords": [
+    "react",
+    "widget",
+    "swap",
+    "folks-finance-widget",
+    "folks-widget-react"
+  ],
   "sideEffects": [
     "**/*.css"
   ],

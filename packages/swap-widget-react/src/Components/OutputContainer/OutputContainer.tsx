@@ -9,7 +9,7 @@ import { SwapContext } from '../../context/SwapContext';
 import TokenList, { I_TokenList } from '../../constants/TokenList';
 
 const OutputContainer = ({
-    // filteredTokenList,
+    changeTokenTwoAmount
 }: any) => {
 
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -26,27 +26,13 @@ const OutputContainer = ({
         setTokenTwoAmount,
         getDataWhenTokensChanged,
         setSelectedToken,
+        showInterval,
+        setShowInterval,
+        outputTokenAmountInUSD,
+        setOutputTokenAmountInUSD,
         getTokenAmount
     } = React.useContext(SwapContext);
 
-
-    const changeTokenTwoAmount = async (value: any) => {
-        const tokenAmount = value;
-        setTokenTwoAmount(tokenAmount);
-
-        const tokenTwoDecimal = tokenTwo?.assetDecimal;
-        const tokenOneDecimal = tokenOne?.assetDecimal;
-        const decimalTokenAmount = tokenAmount * (10 ** tokenTwoDecimal);
-
-        const quoteAmount = await getTokenAmount(decimalTokenAmount, tokenOne, tokenTwo, 'FIXED_OUTPUT');
-
-        const fetchedAmount = quoteAmount / (10 ** tokenOneDecimal);
-
-        if (fetchedAmount) {
-            setTokenOneAmount(fetchedAmount);
-        }
-
-    }
 
     const handleTokenSelection = async (token: I_TokenList) => {
         setTokenTwo(token);
@@ -93,7 +79,7 @@ const OutputContainer = ({
     const [tokenBalance, setTokeBalance] = useState(0);
     const [tokenAmountInUSD, setTokenAmountInUSD] = useState(0);
 
-    const [inputTokenAmountInUSD, setInputTokenAmountInUSD] = useState(0);
+    // const [inputTokenAmountInUSD, setInputTokenAmountInUSD] = useState(0);
 
     const getBalanceDetails = () => {
         if (tokenTwo) {
@@ -106,7 +92,7 @@ const OutputContainer = ({
 
             if (tokenTwoAmount) {
                 const tokenAmountInUSD = (tokenTwoAmount * priceOfUsd)
-                setInputTokenAmountInUSD(tokenAmountInUSD);
+                setOutputTokenAmountInUSD(tokenAmountInUSD);
 
             }
 
@@ -121,6 +107,13 @@ const OutputContainer = ({
         }
 
     }, [tokenTwoAmount, tokenTwo])
+
+    const handleOpenTokenModal = () => {
+        if (showInterval) {
+            setShowInterval(false);
+        }
+        onOpen();
+    }
 
     return (
         <div>
@@ -149,7 +142,7 @@ const OutputContainer = ({
 
             <p className="ui-text-[16px]  ui-text-gray-500">You Receive</p>
 
-            <div className="ui-flex ui-bg-[#1E293B]  ui-border-gray-400 ui-border ui-px-4 ui-py-2 ui-rounded-xl ui-flex-col ui-gap-4">
+            <div className="ui-flex ui-bg-gray-700  ui-border-gray-400 ui-border ui-px-4 ui-py-2 ui-rounded-xl ui-flex-col ui-gap-4">
                 <div className="ui-flex ui-justify-between">
                     <InputTokenAmount
                         tokenAmount={tokenTwoAmount}
@@ -158,14 +151,14 @@ const OutputContainer = ({
                     />
 
                     <SelectToken
-                        openTokenModal={onOpen}
+                        openTokenModal={handleOpenTokenModal}
                         token={tokenTwo}
                     />
                 </div>
 
                 <div className="ui-flex ui-flex-row ui-justify-between ui-text-gray-400">
                     <div className="">
-                        <span className="ui-text-[20px]">${inputTokenAmountInUSD.toFixed(2)}</span>
+                        <span className="ui-text-[20px]">${outputTokenAmountInUSD?.toFixed(2)}</span>
                     </div>
                 </div>
             </div>

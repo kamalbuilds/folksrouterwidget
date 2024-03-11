@@ -12,12 +12,14 @@ import { FaWallet } from "react-icons/fa";
 
 
 
-const InputContainer = () => {
+const InputContainer = ({
+    changeTokenOneAmount
+}: any) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
 
     const [assetsOfUser, setAssetsOfUser] = React.useState();
 
-    const [filteredTokenList, setFilteredTokenList] = React.useState();
+    const [filteredTokenList, setFilteredTokenList] = React.useState(TokenList);
 
     const {
         clients,
@@ -27,6 +29,7 @@ const InputContainer = () => {
     const { getAssets } = useContext(GlobalContext);
 
     const getUsersAssets = async () => {
+
         const usersAssets = await getAssets(TokenObject);
 
         const TokensObjectValues = Object.values(usersAssets);
@@ -39,6 +42,8 @@ const InputContainer = () => {
     useEffect(() => {
         if (activeAccount) {
             getUsersAssets();
+        } else {
+            setFilteredTokenList(TokenList)
         }
     }, [activeAccount])
 
@@ -54,30 +59,14 @@ const InputContainer = () => {
         setTokenOne,
         setTokenOneAmount,
         setTokenTwoAmount,
+        setShowInterval,
+        showInterval,
         getDataWhenTokensChanged,
-        getTokenAmount
+        getTokenAmount,
+        inputTokenAmountInUSD,
+        setInputTokenAmountInUSD,
     } = React.useContext(SwapContext);
 
-
-    const changeTokenOneAmount = async (value: any) => {
-
-        const tokenAmount = value;
-        setTokenOneAmount(tokenAmount);
-
-        const tokenOneDecimal = tokenOne?.assetDecimal;
-        const tokenTwoDecimal = tokenTwo?.assetDecimal;
-
-        const decimalTokenAmount = tokenAmount * (10 ** tokenOneDecimal);
-
-        const quoteAmount = await getTokenAmount(decimalTokenAmount, tokenOne, tokenTwo, 'FIXED_INPUT');
-
-        const fetchedAmount = quoteAmount / (10 ** tokenTwoDecimal);
-
-        if (fetchedAmount) {
-            setTokenTwoAmount(fetchedAmount);
-        }
-
-    }
 
     const handleTokenSelection = async (token: I_TokenList) => {
         setSelectedToken(token);
@@ -109,11 +98,21 @@ const InputContainer = () => {
     }
 
     const filterTokenList = () => {
-        const tokenlistFiltered = assetsOfUser.filter((token: any) => (
-            token.assetId !== selectedToken?.assetId
-        ))
+
+        let tokenlistFiltered;
+        if (activeAccount) {
+            tokenlistFiltered = assetsOfUser.filter((token: any) => (
+                token.assetId !== selectedToken?.assetId
+            ))
+        } else {
+            tokenlistFiltered = TokenList.filter((token: any) => (
+                token.assetId !== selectedToken?.assetId))
+        }
+
         setFilteredTokenList(tokenlistFiltered);
     }
+
+
 
     React.useEffect(() => {
         if (selectedToken) {
@@ -124,8 +123,6 @@ const InputContainer = () => {
 
     const [tokenBalance, setTokeBalance] = useState(0);
     const [tokenAmountInUSD, setTokenAmountInUSD] = useState(0);
-
-    const [inputTokenAmountInUSD, setInputTokenAmountInUSD] = useState(0);
 
     const getBalanceDetails = () => {
         if (tokenOne) {
@@ -155,6 +152,14 @@ const InputContainer = () => {
     }, [tokenOneAmount, tokenOne])
 
 
+    const handleOpenTokenModal = () => {
+        if (showInterval) {
+            setShowInterval(false);
+        }
+        onOpen();
+    }
+
+
     return (
 
         <div>
@@ -180,7 +185,7 @@ const InputContainer = () => {
             </Modal>
 
             <p className="ui-text-[16px] ui-text-gray-500">You Pay</p>
-            <div className="ui-flex ui-bg-[#1E293B]  ui-border-gray-400 ui-border ui-px-4 ui-py-2 ui-rounded-xl ui-flex-col ui-gap-4">
+            <div className="ui-flex ui-bg-gray-700  ui-border-gray-400 ui-border ui-px-4 ui-py-2 ui-rounded-xl ui-flex-col ui-gap-4">
                 <div className="ui-flex ui-justify-between">
 
                     <InputTokenAmount
@@ -190,20 +195,20 @@ const InputContainer = () => {
                     />
 
                     <SelectToken
-                        openTokenModal={onOpen}
+                        openTokenModal={handleOpenTokenModal}
                         token={tokenOne}
                     />
                 </div>
 
                 <div className="ui-flex ui-flex-row ui-justify-between ui-text-gray-400">
                     <div className="">
-                        <span className="ui-text-[20px]">${inputTokenAmountInUSD.toFixed(2)}</span>
+                        <span className="ui-text-[20px]">${inputTokenAmountInUSD ? inputTokenAmountInUSD?.toFixed(2) : 0}</span>
                     </div>
                     <div>
-                        <div className="ui-flex ui-flex-row ui-gap-[4px] ui-items-center">
+                        {activeAccount && <div className="ui-flex ui-flex-row ui-gap-[4px] ui-items-center">
                             <FaWallet />
-                            <div>{tokenBalance.toFixed(4)}</div>
-                        </div>
+                            <div>{tokenBalance ? tokenBalance.toFixed(4) : 0}</div>
+                        </div>}
                     </div>
                 </div>
             </div>

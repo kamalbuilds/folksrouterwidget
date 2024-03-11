@@ -6,7 +6,7 @@ const Token = ({
 }: any) => {
 
     const tokenDecimal = token.assetDecimal;
-    const tokenAmount = token.amount / (10 ** tokenDecimal);
+    const tokenAmount = token?.amount / (10 ** tokenDecimal);
 
     const usdPrice = token?.price?.USD;
     const priceInUsd = tokenAmount * usdPrice;
@@ -14,7 +14,7 @@ const Token = ({
     return (
         <>
             <div className='leftTokenContainer ui-mr-4'>
-                <img src={token.src} className='ui-w-[30px] ui-h-[30px]' alt="img not fetched" />
+                {token?.src && <img src={token?.src} className='ui-w-[30px] ui-h-[30px]' alt="img not fetched" />}
             </div>
 
 
